@@ -78,6 +78,12 @@ export const birdCategories = [
   { key: "urban", label: "都市常見" },
   { key: "park", label: "公園樹叢" },
   { key: "water", label: "水邊濕地" },
+  { key: "shorebird", label: "鴴科 / 鷸科" },
+  { key: "swallow-summer", label: "燕科夏候鳥" },
+  { key: "taiwan-endemic", label: "台灣特有種" },
+  { key: "taiwan-endemic-subspecies", label: "台灣特有亞種" },
+  { key: "winter-migrant", label: "冬候鳥" },
+  { key: "summer-migrant", label: "夏候鳥" },
   { key: "forest-edge", label: "林緣山區" },
 ] as const;
 
@@ -333,7 +339,30 @@ function createBirdImage(name: string, imageSrc: string, imagePage: string): Bir
   };
 }
 
+function createBirdPlaceholderImage(name: string): BirdImageOverride {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 520">
+    <rect width="720" height="520" rx="48" fill="#eef4ea"/>
+    <circle cx="545" cy="130" r="74" fill="#d8e6d2"/>
+    <path d="M172 319c42-86 126-135 238-121 95 12 142 72 158 138-88 50-210 61-316 36-35-8-62-25-80-53z" fill="#496541"/>
+    <path d="M448 201c40-26 85-16 111 14 18 21 24 49 18 77-57 14-112-2-155-44 2-18 10-34 26-47z" fill="#496541"/>
+    <path d="M168 318c-42-17-81-20-117-8 25 42 74 65 140 70z" fill="#496541"/>
+    <circle cx="536" cy="219" r="8" fill="#f9f6ee"/>
+    <path d="M583 232l66 10-63 25z" fill="#496541"/>
+    <text x="360" y="448" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#496541">${name} 照片待補</text>
+    <text x="360" y="486" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#6f8767">避免誤放不同鳥種照片</text>
+  </svg>`;
+
+  return {
+    imageSrc: `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`,
+    imageAlt: `${name} 的照片待補佔位圖`,
+    imageCredit: "照片待補，避免誤放不同鳥種",
+    imagePage: "#photo-pending",
+  };
+}
+
 function describeSize(traits: string[]) {
+  if (traits.includes("large")) return "大型鳥，遠看也能先靠輪廓、腿長或翼型縮小方向。";
+  if (traits.includes("medium-large")) return "中大型鳥，通常比鴿子大，先看站姿和整體比例。";
   if (traits.includes("small")) return "小型鳥，適合先看整體輪廓與移動方式。";
   if (traits.includes("medium")) return "中型鳥，站姿與頭部比例通常很好辨識。";
   return "體型中等偏大，遠看時也容易留下印象。";
@@ -475,6 +504,16 @@ const birdImageOverrides: Record<string, BirdImageOverride> = {
     "https://upload.wikimedia.org/wikipedia/commons/e/eb/Red-rumped_swallow_in_Calpe%2C_Spain_-_May_2018_01.jpg",
     "https://en.wikipedia.org/wiki/European_red-rumped_swallow"
   ),
+  洋燕: createBirdImage(
+    "洋燕",
+    "https://upload.wikimedia.org/wikipedia/commons/b/b2/Pacific_Swallow_%28Hirundo_tahitica%29.jpg",
+    "https://commons.wikimedia.org/wiki/File:Pacific_Swallow_(Hirundo_tahitica).jpg"
+  ),
+  棕沙燕: createBirdImage(
+    "棕沙燕",
+    "https://upload.wikimedia.org/wikipedia/commons/a/a0/Grey-throated_Martin_%28Riparia_chinensis%29_%2830357547261%29.jpg",
+    "https://commons.wikimedia.org/wiki/File:Grey-throated_Martin_(Riparia_chinensis)_(30357547261).jpg"
+  ),
   大卷尾: createBirdImage(
     "大卷尾",
     "https://upload.wikimedia.org/wikipedia/commons/f/f9/Bdrongo-Sandeep1.jpg",
@@ -504,6 +543,51 @@ const birdImageOverrides: Record<string, BirdImageOverride> = {
     "台灣藍鵲",
     "https://upload.wikimedia.org/wikipedia/commons/7/79/Taiwan_blue_magpie_%28Urocissa_caerulea%29_Xindian.jpg",
     "https://en.wikipedia.org/wiki/Taiwan_blue_magpie"
+  ),
+  台灣竹雞: createBirdImage(
+    "台灣竹雞",
+    "https://upload.wikimedia.org/wikipedia/commons/c/c0/Bambusicola_thoracicus_-Yangmingshan_National_Park%2C_Taiwan-8.jpg",
+    "https://zh.wikipedia.org/wiki/%E5%8F%B0%E7%81%A3%E7%AB%B9%E9%9B%9E"
+  ),
+  藍腹鷴: createBirdImage(
+    "藍腹鷴",
+    "https://upload.wikimedia.org/wikipedia/commons/0/03/Swinhoe%27s_Pheasant_0673.jpg",
+    "https://zh.wikipedia.org/wiki/%E8%93%9D%E9%B9%87"
+  ),
+  帝雉: createBirdImage(
+    "帝雉",
+    "https://upload.wikimedia.org/wikipedia/commons/6/60/Mikado_Pheasant_398.jpg",
+    "https://zh.wikipedia.org/wiki/%E5%B8%9D%E9%9B%89"
+  ),
+  台灣朱雀: createBirdImage(
+    "台灣朱雀",
+    "https://upload.wikimedia.org/wikipedia/commons/a/a8/Taiwan_Rosefinch_Carpodacus_formosanus%2C_male%2C_Taiwan.jpg",
+    "https://zh.wikipedia.org/wiki/%E5%8F%B0%E7%81%A3%E6%9C%B1%E9%9B%80"
+  ),
+  台灣灰鷽: createBirdImage(
+    "台灣灰鷽",
+    "https://upload.wikimedia.org/wikipedia/commons/3/36/Grey-headed_Bullfinch.jpg",
+    "https://zh.wikipedia.org/wiki/%E5%8F%B0%E7%81%A3%E7%81%B0%E9%A0%AD%E7%81%B0%E9%9B%80"
+  ),
+  赤腹山雀: createBirdImage(
+    "赤腹山雀",
+    "https://upload.wikimedia.org/wikipedia/commons/6/67/Sittiparus_castaneoventris%2C_Taiwan_1.jpg",
+    "https://zh.wikipedia.org/wiki/%E8%B5%A4%E8%85%B9%E5%B1%B1%E9%9B%80"
+  ),
+  黃山雀: createBirdImage(
+    "黃山雀",
+    "https://upload.wikimedia.org/wikipedia/commons/4/47/Taiwan_tit.jpg",
+    "https://zh.wikipedia.org/wiki/%E9%BB%83%E5%B1%B1%E9%9B%80"
+  ),
+  烏頭翁: createBirdImage(
+    "烏頭翁",
+    "https://upload.wikimedia.org/wikipedia/commons/8/8b/Styan%27s_bulbul.jpg",
+    "https://zh.wikipedia.org/wiki/%E7%83%8F%E9%A0%AD%E7%BF%81"
+  ),
+  台灣紫嘯鶇: createBirdImage(
+    "台灣紫嘯鶇",
+    "https://upload.wikimedia.org/wikipedia/commons/d/d5/Formosan_Whistling-Thrush_-_Taiwan_S4E6052_%2817047153068%29.jpg",
+    "https://zh.wikipedia.org/wiki/%E8%87%BA%E7%81%A3%E7%B4%AB%E5%98%AF%E9%B6%87"
   ),
   喜鵲: createBirdImage(
     "喜鵲",
@@ -604,6 +688,156 @@ const birdImageOverrides: Record<string, BirdImageOverride> = {
     "棕背伯勞",
     "https://upload.wikimedia.org/wikipedia/commons/6/64/Lanius_cristatus_-_Surin.jpg",
     "https://en.wikipedia.org/wiki/Brown_shrike"
+  ),
+  東方環頸鴴: createBirdImage(
+    "東方環頸鴴",
+    "https://upload.wikimedia.org/wikipedia/commons/b/bd/Kentish_plover_%28Charadrius_alexandrinus_alexandrinus%29_Sfax.jpg",
+    "https://commons.wikimedia.org/wiki/File:Kentish_plover_(Charadrius_alexandrinus_alexandrinus)_Sfax.jpg"
+  ),
+  蒙古鴴: createBirdImage(
+    "蒙古鴴",
+    "https://upload.wikimedia.org/wikipedia/commons/7/75/Lesser_Sand_Plover_AMSM4982_2_LSPL.jpg",
+    "https://commons.wikimedia.org/wiki/File:Lesser_Sand_Plover_AMSM4982_2_LSPL.jpg"
+  ),
+  鐵嘴鴴: createBirdImage(
+    "鐵嘴鴴",
+    "https://upload.wikimedia.org/wikipedia/commons/4/43/Greater_Sand_Plover.jpg",
+    "https://commons.wikimedia.org/wiki/File:Greater_Sand_Plover.jpg"
+  ),
+  灰斑鴴: createBirdImage(
+    "灰斑鴴",
+    "https://upload.wikimedia.org/wikipedia/commons/e/ed/Grey_plover_%28_black-bellied_plover%29.jpg",
+    "https://commons.wikimedia.org/wiki/File:Grey_plover_(_black-bellied_plover).jpg"
+  ),
+  太平洋金斑鴴: createBirdImage(
+    "太平洋金斑鴴",
+    "https://upload.wikimedia.org/wikipedia/commons/c/c1/Pacific_Golden-Plover_in_Bakkhali_September_2025_by_Tisha_Mukherjee_06.jpg",
+    "https://commons.wikimedia.org/wiki/File:Pacific_Golden-Plover_in_Bakkhali_September_2025_by_Tisha_Mukherjee_06.jpg"
+  ),
+  高蹺鴴: createBirdImage(
+    "高蹺鴴",
+    "https://upload.wikimedia.org/wikipedia/commons/b/bb/Black-winged_stilt_courtship_behaviour.jpg",
+    "https://commons.wikimedia.org/wiki/File:Black-winged_stilt_courtship_behaviour.jpg"
+  ),
+  反嘴鴴: createBirdImage(
+    "反嘴鴴",
+    "https://upload.wikimedia.org/wikipedia/commons/0/07/Pied_avocet_%28Recurvirostra_avosetta%29.jpg",
+    "https://commons.wikimedia.org/wiki/File:Pied_avocet_(Recurvirostra_avosetta).jpg"
+  ),
+  大杓鷸: createBirdImage(
+    "大杓鷸",
+    "https://upload.wikimedia.org/wikipedia/commons/a/a0/Eurasian_Curlew_by_Tisha_Mukherjee_05.jpg",
+    "https://commons.wikimedia.org/wiki/File:Eurasian_Curlew_by_Tisha_Mukherjee_05.jpg"
+  ),
+  中杓鷸: createBirdImage(
+    "中杓鷸",
+    "https://upload.wikimedia.org/wikipedia/commons/0/0c/Whimbrel_Numenius_phaeopus.jpg",
+    "https://commons.wikimedia.org/wiki/File:Whimbrel_Numenius_phaeopus.jpg"
+  ),
+  青足鷸: createBirdImage(
+    "青足鷸",
+    "https://upload.wikimedia.org/wikipedia/commons/c/c7/The_common_greenshank_%28Tringa_nebularia%29.jpg",
+    "https://commons.wikimedia.org/wiki/File:The_common_greenshank_(Tringa_nebularia).jpg"
+  ),
+  赤足鷸: createBirdImage(
+    "赤足鷸",
+    "https://upload.wikimedia.org/wikipedia/commons/4/4e/Common_Redshank_Tringa_totanus.jpg",
+    "https://commons.wikimedia.org/wiki/File:Common_Redshank_Tringa_totanus.jpg"
+  ),
+  鷹斑鷸: createBirdImage(
+    "鷹斑鷸",
+    "https://upload.wikimedia.org/wikipedia/commons/6/6c/Tringa_glareola_-_Wood_Sandpiper_09.jpg",
+    "https://commons.wikimedia.org/wiki/File:Tringa_glareola_-_Wood_Sandpiper_09.jpg"
+  ),
+  田鷸: createBirdImage(
+    "田鷸",
+    "https://upload.wikimedia.org/wikipedia/commons/8/82/Common_snipe_%28Gallinago_gallinago%29_in_courtship_flight.jpg",
+    "https://commons.wikimedia.org/wiki/File:Common_snipe_(Gallinago_gallinago)_in_courtship_flight.jpg"
+  ),
+  尖尾濱鷸: createBirdImage(
+    "尖尾濱鷸",
+    "https://upload.wikimedia.org/wikipedia/commons/5/59/Sharp-tailed_Sandpiper_at_Lake_Wollumboola%2C_Jervis_Bay_National_Park_NSW.jpg",
+    "https://commons.wikimedia.org/wiki/File:Sharp-tailed_Sandpiper_at_Lake_Wollumboola,_Jervis_Bay_National_Park_NSW.jpg"
+  ),
+  紅胸濱鷸: createBirdImage(
+    "紅胸濱鷸",
+    "https://upload.wikimedia.org/wikipedia/commons/8/86/Red_Necked_Stint_with_Little_stint.jpg",
+    "https://commons.wikimedia.org/wiki/File:Red_Necked_Stint_with_Little_stint.jpg"
+  ),
+  寬嘴鷸: createBirdImage(
+    "寬嘴鷸",
+    "https://upload.wikimedia.org/wikipedia/commons/f/fb/Broad_billed_sandpiper_by_Sreedev_Puthur.jpg",
+    "https://commons.wikimedia.org/wiki/File:Broad_billed_sandpiper_by_Sreedev_Puthur.jpg"
+  ),
+  三趾濱鷸: createBirdImage(
+    "三趾濱鷸",
+    "https://upload.wikimedia.org/wikipedia/commons/7/75/Sanderling_Westkapelle_02.jpg",
+    "https://commons.wikimedia.org/wiki/File:Sanderling_Westkapelle_02.jpg"
+  ),
+  翻石鷸: createBirdImage(
+    "翻石鷸",
+    "https://upload.wikimedia.org/wikipedia/commons/a/ad/Ruddy_Turnstone_2025_12_25_03.jpg",
+    "https://commons.wikimedia.org/wiki/File:Ruddy_Turnstone_2025_12_25_03.jpg"
+  ),
+  黑腹濱鷸: createBirdImage(
+    "黑腹濱鷸",
+    "https://upload.wikimedia.org/wikipedia/commons/1/14/Dunlin_%2874699%29.jpg",
+    "https://commons.wikimedia.org/wiki/File:Dunlin_(74699).jpg"
+  ),
+  黑尾鷸: createBirdImage(
+    "黑尾鷸",
+    "https://upload.wikimedia.org/wikipedia/commons/4/40/Black-tailed_Godwit_Uferschnepfe.jpg",
+    "https://commons.wikimedia.org/wiki/File:Black-tailed_Godwit_Uferschnepfe.jpg"
+  ),
+  琵嘴鴨: createBirdImage(
+    "琵嘴鴨",
+    "https://upload.wikimedia.org/wikipedia/commons/c/c0/Duck_Banding%2C_Northern_Shoveler_%2816150478975%29.jpg",
+    "https://commons.wikimedia.org/wiki/File:Duck_Banding,_Northern_Shoveler_(16150478975).jpg"
+  ),
+  赤頸鴨: createBirdImage(
+    "赤頸鴨",
+    "https://upload.wikimedia.org/wikipedia/commons/5/5f/Eurasian_wigeon_in_Sakai%2C_Osaka%2C_February_2016.jpg",
+    "https://commons.wikimedia.org/wiki/File:Eurasian_wigeon_in_Sakai,_Osaka,_February_2016.jpg"
+  ),
+  尖尾鴨: createBirdImage(
+    "尖尾鴨",
+    "https://upload.wikimedia.org/wikipedia/commons/6/64/Northern_Pintail_Duck_5.jpg",
+    "https://commons.wikimedia.org/wiki/File:Northern_Pintail_Duck_5.jpg"
+  ),
+  白眉鴨: createBirdImage(
+    "白眉鴨",
+    "https://upload.wikimedia.org/wikipedia/commons/8/83/Garganey_by_Tisha_Mukherjee_02.jpg",
+    "https://commons.wikimedia.org/wiki/File:Garganey_by_Tisha_Mukherjee_02.jpg"
+  ),
+  花嘴鴨: createBirdImage(
+    "花嘴鴨",
+    "https://upload.wikimedia.org/wikipedia/commons/9/97/Spot-billed_duck%2C_Tenn%C5%8Dji_Park%2C_Osaka%2C_October_2015.jpg",
+    "https://commons.wikimedia.org/wiki/File:Spot-billed_duck,_Tennōji_Park,_Osaka,_October_2015.jpg"
+  ),
+  彩鷸: createBirdImage(
+    "彩鷸",
+    "https://upload.wikimedia.org/wikipedia/commons/7/75/Greater_Painted-Snipe_by_Tisha_Mukherjee_02.jpg",
+    "https://commons.wikimedia.org/wiki/File:Greater_Painted-Snipe_by_Tisha_Mukherjee_02.jpg"
+  ),
+  燕鴴: createBirdImage(
+    "燕鴴",
+    "https://upload.wikimedia.org/wikipedia/commons/c/c1/Oriental_Pratincole_by_Tisha_Mukherjee_04.jpg",
+    "https://commons.wikimedia.org/wiki/File:Oriental_Pratincole_by_Tisha_Mukherjee_04.jpg"
+  ),
+  小燕鷗: createBirdImage(
+    "小燕鷗",
+    "https://upload.wikimedia.org/wikipedia/commons/c/c8/Little_tern_%28Sternula_albifrons%29_male%2C_Rajshahi%2C_Bangladesh.jpg",
+    "https://commons.wikimedia.org/wiki/File:Little_tern_(Sternula_albifrons)_male,_Rajshahi,_Bangladesh.jpg"
+  ),
+  黑枕燕鷗: createBirdImage(
+    "黑枕燕鷗",
+    "https://upload.wikimedia.org/wikipedia/commons/3/37/Black-naped_tern_%28Sterna_sumatrana%29_adult_breeding_plumage.jpg",
+    "https://commons.wikimedia.org/wiki/File:Black-naped_tern_(Sterna_sumatrana)_adult_breeding_plumage.jpg"
+  ),
+  栗喉蜂虎: createBirdImage(
+    "栗喉蜂虎",
+    "https://upload.wikimedia.org/wikipedia/commons/8/8c/Blue-tailed_bee-eater_%28Merops_philippinus%29_Yala.jpg",
+    "https://commons.wikimedia.org/wiki/File:Blue-tailed_bee-eater_(Merops_philippinus)_Yala.jpg"
   ),
 };
 
@@ -813,7 +1047,7 @@ const birdSeeds: BirdSeed[] = [
     clue: "飛行速度快、尾叉明顯，停棲時身形修長。",
     accent: "from-slate-100 to-blue-50",
     matcherHabitats: ["urban", "water"],
-    matcherTraits: ["small", "dark", "tail-up"],
+    matcherTraits: ["small", "dark", "tail-up", "swallow", "swallow-summer", "summer-migrant"],
   },
   {
     name: "赤腰燕",
@@ -822,7 +1056,25 @@ const birdSeeds: BirdSeed[] = [
     clue: "腹部較淡，腰部帶橙褐色，尾叉不如家燕那麼深。",
     accent: "from-amber-100 to-white",
     matcherHabitats: ["urban", "water"],
-    matcherTraits: ["small", "brown", "tail-up"],
+    matcherTraits: ["small", "brown", "tail-up", "swallow", "swallow-summer", "summer-migrant"],
+  },
+  {
+    name: "洋燕",
+    summary: "常在低海拔聚落、海岸和河岸附近飛行捕蟲，飛行高度常較低，是很適合和家燕比較的燕科鳥。",
+    habitat: "海岸、河岸、聚落、開闊地",
+    clue: "尾叉較短，額與喉帶暖栗色，整體比家燕更圓短，常貼近水面或建物周邊飛行。",
+    accent: "from-cyan-100 to-amber-50",
+    matcherHabitats: ["urban", "water", "park"],
+    matcherTraits: ["small", "dark", "orange", "tail-up", "swallow", "swallow-summer", "summer-migrant"],
+  },
+  {
+    name: "棕沙燕",
+    summary: "小型燕科鳥，常沿河岸、濕地或開闊水域上方成群飛行，遷徙季與夏季前後較容易被注意。",
+    habitat: "河岸、濕地、開闊水域、農田上空",
+    clue: "整體灰褐色調，喉胸較淡，尾叉不深，常以快速低飛方式在水面或草地上空捕蟲。",
+    accent: "from-stone-100 to-sky-50",
+    matcherHabitats: ["water", "park"],
+    matcherTraits: ["small", "brown", "white", "swallow", "swallow-summer", "summer-migrant"],
   },
   {
     name: "大卷尾",
@@ -1058,16 +1310,503 @@ const birdSeeds: BirdSeed[] = [
     matcherHabitats: ["park", "urban", "water"],
     matcherTraits: ["small", "brown", "head-pattern"],
   },
+  {
+    name: "東方環頸鴴",
+    summary: "小型鴴科水鳥，冬季與過境期常在河口、沙洲、海岸灘地快速跑停覓食。",
+    habitat: "河口、沙灘、潮間帶、鹽田裸地",
+    clue: "體型小、腿細，胸前有斷開的黑褐色環帶，常用跑跑停停的方式覓食。",
+    accent: "from-amber-100 to-sky-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["small", "brown", "white", "shorebird", "plover", "winter-migrant"],
+  },
+  {
+    name: "蒙古鴴",
+    summary: "常見過境與冬候鴴科鳥，喜歡在海岸泥灘、河口與沙洲活動。",
+    habitat: "河口泥灘、沙洲、海岸濕地",
+    clue: "嘴較短、身形圓潤，繁殖羽胸側橙褐色，非繁殖羽則偏灰褐。",
+    accent: "from-stone-100 to-sky-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["small", "brown", "white", "shorebird", "plover", "winter-migrant"],
+  },
+  {
+    name: "鐵嘴鴴",
+    summary: "比蒙古鴴略大，冬季與過境期在開闊泥灘和海岸沙洲可見。",
+    habitat: "河口、潮間帶、海岸沙地",
+    clue: "嘴較粗長，頭胸比例比蒙古鴴更紮實，常和其他鴴科混群。",
+    accent: "from-amber-100 to-stone-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium", "brown", "white", "shorebird", "plover", "winter-migrant"],
+  },
+  {
+    name: "灰斑鴴",
+    summary: "中型鴴科冬候鳥，非繁殖羽灰白低調，常在潮間帶與河口灘地活動。",
+    habitat: "河口、泥灘、海岸濕地",
+    clue: "體型較大，嘴短直，非繁殖羽整體灰白，飛行時黑色腋羽是重要線索。",
+    accent: "from-slate-100 to-sky-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium", "gray", "white", "shorebird", "plover", "winter-migrant"],
+  },
+  {
+    name: "太平洋金斑鴴",
+    summary: "過境與冬季可見的中型鴴科鳥，常在草地、河口與泥灘覓食。",
+    habitat: "河口、草地、潮間帶、農地邊",
+    clue: "背部金褐斑點細緻，站姿挺直，繁殖羽時黑腹與白邊非常鮮明。",
+    accent: "from-yellow-100 to-stone-50",
+    matcherHabitats: ["water", "park"],
+    matcherTraits: ["medium", "brown", "yellow", "shorebird", "plover", "winter-migrant"],
+  },
+  {
+    name: "高蹺鴴",
+    summary: "黑白配色明顯的長腿水鳥，在濕地、水田與魚塭很容易被注意到。",
+    habitat: "濕地、水田、魚塭、淺水池",
+    clue: "腿非常長且偏粉紅，身體黑白分明，涉水時姿態像踩高蹺。",
+    accent: "from-white to-rose-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium", "white", "dark", "long-leg", "shorebird", "winter-migrant"],
+  },
+  {
+    name: "反嘴鴴",
+    summary: "冬季局部可見的優雅水鳥，常在淺水區用上彎嘴左右掃水覓食。",
+    habitat: "河口、潟湖、鹽田、淺水濕地",
+    clue: "黑白配色、長腿與上彎嘴非常醒目，覓食方式也很特殊。",
+    accent: "from-white to-sky-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium", "white", "dark", "long-leg", "long-bill", "shorebird", "winter-migrant"],
+  },
+  {
+    name: "大杓鷸",
+    summary: "大型鷸科冬候鳥，常在廣闊河口與泥灘低頭覓食。",
+    habitat: "河口泥灘、潮間帶、濕地",
+    clue: "體型大，嘴非常長且向下彎，是鷸科裡最容易記住的輪廓之一。",
+    accent: "from-stone-100 to-amber-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium-large", "brown", "long-bill", "shorebird", "sandpiper", "winter-migrant"],
+  },
+  {
+    name: "中杓鷸",
+    summary: "常見過境與冬候鷸科鳥，和大杓鷸相似但體型較小、頭部花紋更明顯。",
+    habitat: "河口、海岸泥灘、沙洲",
+    clue: "嘴下彎但比大杓鷸短，頭頂有明顯深淺條紋。",
+    accent: "from-amber-100 to-stone-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium-large", "brown", "head-pattern", "long-bill", "shorebird", "sandpiper", "winter-migrant"],
+  },
+  {
+    name: "青足鷸",
+    summary: "冬季與過境期常見的鷸科水鳥，會在淺水邊緣慢步覓食。",
+    habitat: "濕地、河口、水田、魚塭",
+    clue: "腳偏灰綠，嘴略上翹，身形修長，常單獨或小群活動。",
+    accent: "from-sky-100 to-stone-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium", "gray", "white", "long-leg", "long-bill", "shorebird", "sandpiper", "winter-migrant"],
+  },
+  {
+    name: "赤足鷸",
+    summary: "冬候與過境期可見，常在河口、泥灘和濕地邊緣覓食。",
+    habitat: "河口、濕地、潮間帶",
+    clue: "紅色腳與嘴基部是重要線索，飛行時白色翼後緣很明顯。",
+    accent: "from-rose-100 to-sky-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium", "gray", "white", "long-leg", "shorebird", "sandpiper", "winter-migrant"],
+  },
+  {
+    name: "鷹斑鷸",
+    summary: "常見過境鷸科鳥，喜歡淡水濕地、水田和池塘邊緣。",
+    habitat: "水田、池塘邊、濕地草澤",
+    clue: "背部斑點細碎，腳偏黃綠，常在淺水草邊仔細覓食。",
+    accent: "from-stone-100 to-lime-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["small", "brown", "white", "long-leg", "shorebird", "sandpiper", "winter-migrant"],
+  },
+  {
+    name: "田鷸",
+    summary: "冬季濕地與水田常見，但保護色很好，常到飛起才發現。",
+    habitat: "水田、濕草地、池塘邊、沼澤",
+    clue: "嘴很長、身體褐色斑紋密集，常貼近草邊蹲伏。",
+    accent: "from-amber-100 to-stone-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium", "brown", "head-pattern", "long-bill", "shorebird", "sandpiper", "winter-migrant"],
+  },
+  {
+    name: "尖尾濱鷸",
+    summary: "秋冬過境濱鷸之一，常和其他小型鷸科混群出現在泥灘。",
+    habitat: "河口泥灘、潮間帶、鹽田",
+    clue: "體型小，胸部常有細斑，非繁殖羽整體偏褐灰，需和其他濱鷸仔細比較。",
+    accent: "from-stone-100 to-sky-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["small", "brown", "white", "shorebird", "sandpiper", "winter-migrant"],
+  },
+  {
+    name: "紅胸濱鷸",
+    summary: "小型濱鷸，過境與冬季可見，常在灘地邊緣成群覓食。",
+    habitat: "河口、泥灘、海岸濕地",
+    clue: "體型很小，繁殖羽胸腹帶紅褐，非繁殖羽則偏灰白，需要看嘴長與體型。",
+    accent: "from-rose-100 to-slate-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["small", "brown", "white", "shorebird", "sandpiper", "winter-migrant"],
+  },
+  {
+    name: "寬嘴鷸",
+    summary: "過境期較值得留意的小型鷸科，常混在濱鷸群裡。",
+    habitat: "河口泥灘、鹽田、潮間帶",
+    clue: "嘴基較寬、嘴端微下彎，體型小，觀察時要和紅胸濱鷸等相似種比較。",
+    accent: "from-stone-100 to-cyan-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["small", "brown", "white", "long-bill", "shorebird", "sandpiper", "winter-migrant"],
+  },
+  {
+    name: "三趾濱鷸",
+    summary: "常在海邊浪緣快速跑動，冬季海岸線很有機會遇到。",
+    habitat: "沙灘、海岸浪緣、潮間帶",
+    clue: "體色偏白灰，常追著退浪跑動覓食，腳色偏黑。",
+    accent: "from-white to-slate-100",
+    matcherHabitats: ["water"],
+    matcherTraits: ["small", "white", "gray", "shorebird", "sandpiper", "winter-migrant"],
+  },
+  {
+    name: "翻石鷸",
+    summary: "冬季海岸和礁岩區常見，會翻動小石頭和海藻找食物。",
+    habitat: "礁岩海岸、港邊、潮間帶",
+    clue: "橙色腳明顯，羽色黑白褐斑駁，行為上常翻石覓食。",
+    accent: "from-orange-100 to-stone-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium", "brown", "white", "orange", "shorebird", "sandpiper", "winter-migrant"],
+  },
+  {
+    name: "黑腹濱鷸",
+    summary: "冬季常見濱鷸，常成群在河口泥灘覓食。",
+    habitat: "河口、泥灘、鹽田、潮間帶",
+    clue: "嘴略下彎，非繁殖羽灰白低調，繁殖羽腹部黑色是強烈辨識點。",
+    accent: "from-slate-100 to-white",
+    matcherHabitats: ["water"],
+    matcherTraits: ["small", "gray", "white", "dark", "shorebird", "sandpiper", "winter-migrant"],
+  },
+  {
+    name: "黑尾鷸",
+    summary: "大型鷸科冬候鳥，常在河口泥灘與水田成群覓食。",
+    habitat: "河口、濕地、水田、魚塭",
+    clue: "嘴長直，飛行時黑白尾羽對比清楚，腿也明顯較長。",
+    accent: "from-stone-100 to-rose-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium-large", "brown", "white", "long-bill", "long-leg", "shorebird", "sandpiper", "winter-migrant"],
+  },
+  {
+    name: "琵嘴鴨",
+    summary: "冬季常見雁鴨，常在湖面或濕地水面群聚濾食。",
+    habitat: "湖泊、埤塘、濕地、河口",
+    clue: "嘴寬大像小湯匙，是最明顯的辨識重點。",
+    accent: "from-emerald-100 to-amber-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium-large", "waterbird", "green", "white", "thick-bill", "winter-migrant"],
+  },
+  {
+    name: "赤頸鴨",
+    summary: "冬季常見雁鴨，常和其他鴨類混群在開闊水面休息。",
+    habitat: "湖泊、河口、濕地、埤塘",
+    clue: "公鳥頭頸栗紅、額頭淡黃，身體灰色，遠看色塊很有辨識度。",
+    accent: "from-rose-100 to-slate-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium-large", "waterbird", "brown", "gray", "winter-migrant"],
+  },
+  {
+    name: "尖尾鴨",
+    summary: "冬季常見雁鴨，體態修長，常在濕地或河口水面活動。",
+    habitat: "濕地、河口、湖泊、埤塘",
+    clue: "公鳥尾羽尖長、頸部白線上延，整體比例優雅修長。",
+    accent: "from-stone-100 to-white",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium-large", "waterbird", "brown", "white", "tail-up", "winter-migrant"],
+  },
+  {
+    name: "白眉鴨",
+    summary: "小型雁鴨，過境與冬季可見，公鳥臉上的白眉非常醒目。",
+    habitat: "水田、濕地、池塘、河口",
+    clue: "公鳥頭側有明顯白眉，體型比多數雁鴨小，常混在其他鴨群裡。",
+    accent: "from-white to-amber-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium", "waterbird", "brown", "white", "head-pattern", "winter-migrant"],
+  },
+  {
+    name: "花嘴鴨",
+    summary: "在台灣水域可見度高的鴨類，部分地區可全年觀察。",
+    habitat: "公園湖泊、濕地、河川、埤塘",
+    clue: "嘴端黃色明顯，身體褐色斑駁，飛行時翼鏡色塊可協助確認。",
+    accent: "from-amber-100 to-green-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium-large", "waterbird", "brown", "yellow", "thick-bill"],
+  },
+  {
+    name: "彩鷸",
+    summary: "偏隱密的濕地鳥，常在水田、草澤與淺水植被邊活動。",
+    habitat: "水田、濕草地、沼澤、池塘邊",
+    clue: "眼周白色線條和身體斑紋明顯，雌鳥色彩通常比雄鳥鮮明。",
+    accent: "from-rose-100 to-stone-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium", "brown", "white", "head-pattern", "shorebird", "winter-migrant"],
+  },
+  {
+    name: "燕鴴",
+    summary: "夏候鳥與過境鳥，常在開闊草地、河灘與農地上空飛行捕蟲。",
+    habitat: "河灘、農地、草地、空曠濕地",
+    clue: "翼型像燕子但停下來像鴴科，喉部淡色邊線和長翅是重點。",
+    accent: "from-amber-100 to-sky-50",
+    matcherHabitats: ["water", "park"],
+    matcherTraits: ["medium", "brown", "white", "shorebird", "summer-migrant"],
+  },
+  {
+    name: "小燕鷗",
+    summary: "夏季海岸與河口常見的小型燕鷗，常在水面上方盤旋俯衝覓食。",
+    habitat: "海岸、河口、沙洲、港區",
+    clue: "體型小，額頭白色、嘴偏黃色，飛行輕快，常俯衝入水。",
+    accent: "from-white to-sky-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["small", "white", "gray", "shorebird", "summer-migrant"],
+  },
+  {
+    name: "黑枕燕鷗",
+    summary: "夏季海岸與離島常見燕鷗，飛行優雅，常在海面上巡航。",
+    habitat: "海岸、港區、離島、近海",
+    clue: "黑色後頸像一條黑枕帶，身體白灰，翅膀修長。",
+    accent: "from-white to-cyan-50",
+    matcherHabitats: ["water"],
+    matcherTraits: ["medium", "white", "gray", "dark", "shorebird", "summer-migrant"],
+  },
+  {
+    name: "栗喉蜂虎",
+    summary: "夏候鳥，常在河岸沙地與開闊地飛行捕蟲，色彩鮮明很容易留下印象。",
+    habitat: "河岸沙地、農地邊、開闊草地",
+    clue: "藍綠身體、栗色喉部與細長黑嘴，常成群停在電線或裸枝上。",
+    accent: "from-cyan-100 to-amber-50",
+    matcherHabitats: ["water", "park"],
+    matcherTraits: ["small", "green", "blue", "orange", "long-bill", "summer-migrant"],
+  },
 ];
 
-export const birdCards: BirdCard[] = birdSeeds.map((bird) => {
-  const override = birdImageOverrides[bird.name] ?? birdImageOverrides["白頭翁"];
+type TaiwanEndemicStatus = "species" | "subspecies";
+
+type TaiwanEndemicTaxon = {
+  name: string;
+  scientificName: string;
+  status: TaiwanEndemicStatus;
+};
+
+const taiwanEndemicTaxa: TaiwanEndemicTaxon[] = [
+  { name: "松雀鷹台灣亞種", scientificName: "Accipiter virgatus fuscipectus", status: "subspecies" },
+  { name: "鳳頭蒼鷹台灣亞種", scientificName: "Lophospiza trivirgata formosae", status: "subspecies" },
+  { name: "大冠鷲台灣亞種", scientificName: "Spilornis cheela hoya", status: "subspecies" },
+  { name: "台灣山鷓鴣", scientificName: "Arborophila crudigularis", status: "species" },
+  { name: "台灣竹雞", scientificName: "Bambusicola sonorivox", status: "species" },
+  { name: "藍腹鷴", scientificName: "Lophura swinhoii", status: "species" },
+  { name: "環頸雉台灣亞種", scientificName: "Phasianus colchicus foumosanus", status: "subspecies" },
+  { name: "帝雉", scientificName: "Syrmaticus mikado", status: "species" },
+  { name: "灰胸秧雞台灣亞種", scientificName: "Lewinia striata taiwana", status: "subspecies" },
+  { name: "灰腳秧雞台灣亞種", scientificName: "Rallina eurizonoides formosana", status: "subspecies" },
+  { name: "棕三趾鶉台灣亞種", scientificName: "Turnix suscitator rostrata", status: "subspecies" },
+  { name: "金背鳩台灣亞種", scientificName: "Streptopelia orientalis orii", status: "subspecies" },
+  { name: "紅頭綠鳩台灣亞種", scientificName: "Treron formosae formosae", status: "subspecies" },
+  { name: "蘭嶼角鴞台灣亞種", scientificName: "Otus elegans botelensis", status: "subspecies" },
+  { name: "黃嘴角鴞亞種", scientificName: "Otus spilocephalus hambrooki", status: "subspecies" },
+  { name: "東方灰林鴞", scientificName: "Strix nivicolum", status: "subspecies" },
+  { name: "鵂鶹台灣亞種", scientificName: "Taenioptynx brodiei pardalotum", status: "subspecies" },
+  { name: "東方草鴞台灣亞種", scientificName: "Tyto longimembris pithecops", status: "subspecies" },
+  { name: "南亞夜鷹台灣亞種", scientificName: "Caprimulgus affinis stictomus", status: "subspecies" },
+  { name: "五色鳥", scientificName: "Psilopogon nuchalis", status: "species" },
+  { name: "大赤啄木台灣亞種", scientificName: "Dendrocopos leucotos insularis", status: "subspecies" },
+  { name: "綠啄木台灣亞種", scientificName: "Picus canus tancolo", status: "subspecies" },
+  { name: "小啄木台灣亞種", scientificName: "Yungipicus canicapillus kaleensis", status: "subspecies" },
+  { name: "小雲雀澎湖亞種", scientificName: "Alauda gulgula coelivox", status: "subspecies" },
+  { name: "小雲雀台灣亞種", scientificName: "Alauda gulgula wattersi", status: "subspecies" },
+  { name: "深山鶯台灣亞種", scientificName: "Horornis acanthizoides concolor", status: "subspecies" },
+  { name: "台灣小鶯台灣亞種", scientificName: "Horornis fortipes robustipes", status: "subspecies" },
+  { name: "黃頭扇尾鶯台灣亞種", scientificName: "Cisticola exilis volitans", status: "subspecies" },
+  { name: "斑紋鷦鶯台灣亞種", scientificName: "Prinia striata striata", status: "subspecies" },
+  { name: "褐頭鷦鶯台灣亞種", scientificName: "Prinia inornata flavirostris", status: "subspecies" },
+  { name: "樹鵲台灣亞種", scientificName: "Dendrocitta formosae formosae", status: "subspecies" },
+  { name: "松鴉台灣亞種", scientificName: "Garrulus glandarius taivanus", status: "subspecies" },
+  { name: "星鴉台灣亞種", scientificName: "Nucifraga caryocatactes owstoni", status: "subspecies" },
+  { name: "台灣藍鵲", scientificName: "Urocissa caerulea", status: "species" },
+  { name: "紅胸啄花鳥台灣亞種", scientificName: "Dicaeum ignipectus formosum", status: "subspecies" },
+  { name: "綠啄花鳥台灣亞種", scientificName: "Dicaeum minullum uchidai", status: "subspecies" },
+  { name: "小卷尾台灣亞種", scientificName: "Dicrurus aeneus braunianus", status: "subspecies" },
+  { name: "大卷尾台灣亞種", scientificName: "Dicrurus macrocercus harterti", status: "subspecies" },
+  { name: "黑頭文鳥台灣亞種", scientificName: "Lonchura atricapilla formosana", status: "subspecies" },
+  { name: "台灣朱雀", scientificName: "Carpodacus formosanus", status: "species" },
+  { name: "台灣灰鷽", scientificName: "Pyrrhula owstoni", status: "species" },
+  { name: "褐鷽台灣亞種", scientificName: "Pyrrhula nipalensis uchidai", status: "subspecies" },
+  { name: "紋翼畫眉", scientificName: "Actinodura morrisoniana", status: "species" },
+  { name: "繡眼畫眉", scientificName: "Alcippe morrisonia", status: "species" },
+  { name: "台灣畫眉", scientificName: "Garrulax taewanus", status: "species" },
+  { name: "白耳畫眉", scientificName: "Heterophasia auricularis", status: "species" },
+  { name: "黃胸藪眉", scientificName: "Liocichla steerii", status: "species" },
+  { name: "棕噪眉", scientificName: "Pterorhinus poecilorhynchus", status: "species" },
+  { name: "台灣白喉噪鶥", scientificName: "Pterorhinus ruficeps", status: "species" },
+  { name: "台灣噪眉", scientificName: "Trochalopteron morrisonianum", status: "species" },
+  { name: "台灣叢樹鶯", scientificName: "Locustella alishanensis", status: "species" },
+  { name: "黑枕藍鶲台灣亞種", scientificName: "Hypothymis azurea oberholseri", status: "subspecies" },
+  { name: "小翼鶇", scientificName: "Brachypteryx goodfellowi", status: "species" },
+  { name: "黃胸青鶲台灣亞種", scientificName: "Ficedula hyperythra innexa", status: "subspecies" },
+  { name: "白尾鴝台灣亞種", scientificName: "Myiomela leucura montium", status: "subspecies" },
+  { name: "台灣紫嘯鶇", scientificName: "Myophonus insularis", status: "species" },
+  { name: "黃腹琉璃台灣亞種", scientificName: "Niltava vivida vivida", status: "subspecies" },
+  { name: "鉛色水鶇台灣亞種", scientificName: "Phoenicurus fuliginosus affinis", status: "subspecies" },
+  { name: "白眉林鴝台灣亞種", scientificName: "Tarsiger indicus formosanus", status: "subspecies" },
+  { name: "栗背林鴝", scientificName: "Tarsiger johnstoniae", status: "species" },
+  { name: "朱鸝台灣亞種", scientificName: "Oriolus traillii ardens", status: "subspecies" },
+  { name: "褐頭花翼", scientificName: "Fulvetta formosana", status: "species" },
+  { name: "黃羽鸚嘴台灣亞種", scientificName: "Suthora verreauxi morrisoniana", status: "subspecies" },
+  { name: "粉紅鸚嘴台灣亞種", scientificName: "Suthora webbiana bulomachus", status: "subspecies" },
+  { name: "赤腹山雀", scientificName: "Sittiparus castaneoventris", status: "species" },
+  { name: "黃山雀", scientificName: "Machlolophus holsti", status: "species" },
+  { name: "青背山雀台灣亞種", scientificName: "Parus monticolus insperatus", status: "subspecies" },
+  { name: "煤山雀台灣亞種", scientificName: "Periparus ater ptilosus", status: "subspecies" },
+  { name: "頭烏線台灣亞種", scientificName: "Schoeniparus brunneus brunneus", status: "subspecies" },
+  { name: "臺灣鷦眉", scientificName: "Pnoepyga formosana", status: "species" },
+  { name: "岩鷚台灣亞種", scientificName: "Prunella collaris fennelli", status: "subspecies" },
+  { name: "棕耳鵯台灣亞種", scientificName: "Hypsipetes amaurotis nagamichii", status: "subspecies" },
+  { name: "紅嘴黑鵯台灣亞種", scientificName: "Hypsipetes leucocephalus nigerrimus", status: "subspecies" },
+  { name: "白頭翁台灣亞種", scientificName: "Pycnonotus sinensis formosae", status: "subspecies" },
+  { name: "烏頭翁", scientificName: "Pycnonotus taivanus", status: "species" },
+  { name: "白環鸚嘴鵯台灣亞種", scientificName: "Spizixos semitorques cinereicapillus", status: "subspecies" },
+  { name: "火冠戴菊鳥", scientificName: "Regulus goodfellowi", status: "species" },
+  { name: "茶腹鳾台灣亞種", scientificName: "Sitta europaea formosana", status: "subspecies" },
+  { name: "八哥台灣亞種", scientificName: "Acridotheres cristatellus formosanus", status: "subspecies" },
+  { name: "山紅頭台灣亞種", scientificName: "Cyanoderma ruficeps praecognitum", status: "subspecies" },
+  { name: "大彎嘴", scientificName: "Erythrogenys erythrocnemis", status: "species" },
+  { name: "小彎嘴", scientificName: "Pomatorhinus musicus", status: "species" },
+  { name: "鷦鷯台灣亞種", scientificName: "Troglodytes troglodytes taivanus", status: "subspecies" },
+  { name: "白頭鶇", scientificName: "Turdus niveiceps", status: "species" },
+  { name: "冠羽畫眉", scientificName: "Yuhina brunneiceps", status: "species" },
+];
+
+const taiwanEndemicStatusByName = taiwanEndemicTaxa.reduce<Record<string, TaiwanEndemicStatus>>(
+  (statuses, taxon) => {
+    statuses[taxon.name] = taxon.status;
+    return statuses;
+  },
+  {}
+);
+
+function stripEndemicSubspeciesSuffix(name: string) {
+  return name.replace(/台灣亞種$/, "").replace(/澎湖亞種$/, "").replace(/亞種$/, "");
+}
+
+function resolveBirdImageOverride(name: string): BirdImageOverride {
+  const exactOverride = birdImageOverrides[name];
+
+  if (exactOverride) return exactOverride;
+
+  const strippedName = stripEndemicSubspeciesSuffix(name);
+  const sameSpeciesOverride = strippedName !== name ? birdImageOverrides[strippedName] : undefined;
+
+  if (sameSpeciesOverride) {
+    return {
+      ...sameSpeciesOverride,
+      imageAlt: `${name} 的本種參考照片`,
+      imageCredit: `${sameSpeciesOverride.imageCredit}（本種參考照）`,
+    };
+  }
+
+  return createBirdPlaceholderImage(name);
+}
+
+function inferEndemicHabitats(name: string) {
+  if (/秧雞|水鶇|白尾鴝/.test(name)) return ["water", "forest-edge"];
+  if (/雲雀|三趾鶉|扇尾鶯|鷦鶯|草鴞|環頸雉/.test(name)) return ["park", "forest-edge"];
+  if (/鳩|八哥|白頭翁|烏頭翁|文鳥|卷尾|棕耳鵯|白環鸚嘴鵯/.test(name)) return ["urban", "park"];
+  return ["forest-edge"];
+}
+
+function inferEndemicHabitatText(name: string) {
+  if (/秧雞|水鶇|白尾鴝/.test(name)) return "溪流、水田、濕地邊緣與潮濕林下";
+  if (/雲雀|三趾鶉|扇尾鶯|鷦鶯|草鴞|環頸雉/.test(name)) return "草地、農田、開闊地與灌叢邊緣";
+  if (/鳩|八哥|白頭翁|烏頭翁|文鳥|卷尾|棕耳鵯|白環鸚嘴鵯/.test(name)) {
+    return "平地聚落、公園、校園、農村與林緣";
+  }
+  if (/鷹|鷲|鴞|鵂鶹|夜鷹/.test(name)) return "森林、山區步道、林緣上空與夜間活動環境";
+  return "台灣山林、林緣、灌叢與中高海拔步道";
+}
+
+function inferEndemicTraits(name: string, status: TaiwanEndemicStatus) {
+  const traits = new Set<string>([
+    status === "species" ? "taiwan-endemic" : "taiwan-endemic-subspecies",
+  ]);
+
+  if (/鷹|鷲|林鴞|草鴞|帝雉|藍腹鷴/.test(name)) traits.add("large");
+  else if (/竹雞|山鷓鴣|鳩|秧雞|三趾鶉|鴞|鵂鶹|夜鷹|卷尾|樹鵲|松鴉|星鴉|朱鸝|大彎嘴/.test(name)) {
+    traits.add("medium-large");
+  } else if (/八哥|白頭翁|烏頭翁|白頭鶇|台灣紫嘯鶇/.test(name)) {
+    traits.add("medium");
+  } else {
+    traits.add("small");
+  }
+
+  if (/黑|烏|卷尾|星鴉|鴉/.test(name)) traits.add("dark");
+  if (/白|灰|鉛|小翼鶇/.test(name)) traits.add("gray");
+  if (/白/.test(name)) traits.add("white");
+  if (/褐|棕|栗|茶|竹雞|山鷓鴣|鵯|鶇|鶯|鷦/.test(name)) traits.add("brown");
+  if (/黃|金/.test(name)) traits.add("yellow");
+  if (/紅|赤|朱|粉/.test(name)) traits.add("red");
+  if (/藍|紫|琉璃/.test(name)) traits.add("blue");
+  if (/綠|五色/.test(name)) traits.add("green");
+  if (/嘴|鷸|鷺|鷲|鷹/.test(name)) traits.add("long-bill");
+  if (/頭|冠|眉|耳|喉|眼/.test(name)) traits.add("head-pattern");
+  if (/秧雞|水鶇|白尾鴝/.test(name)) traits.add("waterbird");
+
+  if (![...traits].some((trait) => ["dark", "gray", "white", "brown", "yellow", "red", "blue", "green"].includes(trait))) {
+    traits.add("brown");
+  }
+
+  return Array.from(traits);
+}
+
+function inferEndemicAccent(name: string) {
+  if (/鷹|鷲|雉|鷴|鴞/.test(name)) return "from-stone-200 to-amber-50";
+  if (/水鶇|秧雞|鴝/.test(name)) return "from-sky-100 to-moss-50";
+  if (/朱|赤|紅|栗|黃/.test(name)) return "from-amber-100 to-rose-50";
+  if (/藍|綠|五色|琉璃/.test(name)) return "from-cyan-100 to-emerald-50";
+  return "from-moss-100 to-cream";
+}
+
+function createTaiwanEndemicBirdSeed(taxon: TaiwanEndemicTaxon): BirdSeed {
+  const statusLabel = taxon.status === "species" ? "台灣特有種" : "台灣特有亞種";
+  const isSubspecies = taxon.status === "subspecies";
+
+  return {
+    name: taxon.name,
+    summary: `${taxon.name}是${statusLabel}，是建立台灣在地鳥類辨識感的重要卡片。先從棲地、體型與頭部花紋建立印象，再慢慢補上叫聲與季節線索。`,
+    habitat: inferEndemicHabitatText(taxon.name),
+    clue: `${statusLabel}${isSubspecies ? "，觀察時可先以本種外型建立印象，再留意台灣族群的地域差異" : ""}。辨識時先看體型輪廓、嘴型與頭部花紋；學名：${taxon.scientificName}。`,
+    accent: inferEndemicAccent(taxon.name),
+    matcherHabitats: inferEndemicHabitats(taxon.name),
+    matcherTraits: inferEndemicTraits(taxon.name, taxon.status),
+  };
+}
+
+const taiwanEndemicSeeds = taiwanEndemicTaxa.map(createTaiwanEndemicBirdSeed);
+
+const allBirdSeeds = [
+  ...birdSeeds,
+  ...taiwanEndemicSeeds.filter((bird) => !birdSeeds.some((seed) => seed.name === bird.name)),
+];
+
+export const birdCards: BirdCard[] = allBirdSeeds.map((bird) => {
+  const endemicStatus = taiwanEndemicStatusByName[bird.name];
+  const matcherTraits = Array.from(
+    new Set([
+      ...bird.matcherTraits,
+      ...(endemicStatus
+        ? [endemicStatus === "species" ? "taiwan-endemic" : "taiwan-endemic-subspecies"]
+        : []),
+    ])
+  );
+  const override = resolveBirdImageOverride(bird.name);
 
   return {
     ...bird,
-    size: describeSize(bird.matcherTraits),
-    behavior: describeBehavior(bird.matcherTraits, bird.matcherHabitats),
-    watchTip: describeWatchTip(bird.matcherTraits, bird.matcherHabitats),
+    matcherTraits,
+    size: describeSize(matcherTraits),
+    behavior: describeBehavior(matcherTraits, bird.matcherHabitats),
+    watchTip: describeWatchTip(matcherTraits, bird.matcherHabitats),
     ...override,
   };
 });

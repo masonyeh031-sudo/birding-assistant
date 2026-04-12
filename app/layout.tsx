@@ -17,6 +17,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-Hant">
+      <head>
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              html, body { margin: 0; width: 100%; max-width: 100%; overflow-x: hidden; }
+              *, *::before, *::after { box-sizing: border-box; }
+              img, svg, video, canvas { max-width: 100%; }
+              img[alt="觀鳥人頻道 Logo"] {
+                width: 56px !important;
+                height: 56px !important;
+                min-width: 56px !important;
+                max-width: 56px !important;
+                min-height: 56px !important;
+                max-height: 56px !important;
+                object-fit: cover !important;
+                display: block !important;
+              }
+            `,
+          }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

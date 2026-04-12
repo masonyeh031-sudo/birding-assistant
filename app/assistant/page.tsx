@@ -1,20 +1,12 @@
-import { PhotoIdentifyPanel } from "@/components/home/photo-identify-panel";
-import { PageIntro } from "@/components/home/page-intro";
-import { SiteHeader } from "@/components/home/site-header";
+import { AssistantExperience } from "@/components/assistant/assistant-experience";
 import { SiteFooter } from "@/components/home/site-footer";
+import { SiteHeader } from "@/components/home/site-header";
 
 export default function AssistantPage() {
   return (
-    <main className="shell pb-8">
+    <main className="shell pb-10">
       <SiteHeader />
-      <PageIntro
-        eyebrow="Birding Assistant"
-        title="賞鳥助手"
-        description="這一頁只保留分步辨識體驗。你可以像 Merlin Bird ID 一樣，依序加入照片、描述環境與特徵，再查看最可能的候選鳥種。"
-      />
-      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-        <PhotoIdentifyPanel />
-      </section>
+      <AssistantExperience />
       <SiteFooter />
     </main>
   );

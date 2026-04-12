@@ -18,11 +18,17 @@
 
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
+  width: 100%;
+  max-width: 100%;
   min-width: 320px;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at top left, rgba(220, 236, 242, 0.9), transparent 32%),
     linear-gradient(180deg, #f7faf3 0%, #f5f8f2 36%, #edf3e8 100%);
@@ -48,9 +54,18 @@ button {
   font: inherit;
 }
 
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
 .shell {
   position: relative;
   overflow: hidden;
+  min-height: 100dvh;
+  isolation: isolate;
 }
 
 .shell::before,
