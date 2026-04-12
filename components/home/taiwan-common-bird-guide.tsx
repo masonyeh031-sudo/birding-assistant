@@ -58,6 +58,103 @@ const verifiedPhotoAliasByName: Record<string, string> = {
 };
 
 const directVerifiedImages: Record<string, VerifiedGuideImage> = {
+  臺灣山鷓鴣: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/Taiwan%20partridge%20%28Arborophila%20crudigularis%29.jpg",
+    alt: "臺灣山鷓鴣的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:Taiwan_partridge_(Arborophila_crudigularis).jpg",
+  },
+  臺灣叢樹鶯: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/2014-03-29%20Locustella%20alishanensis%20%28Taiwan%20Bush%20Warbler%29%2001.jpg",
+    alt: "臺灣叢樹鶯的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:2014-03-29_Locustella_alishanensis_(Taiwan_Bush_Warbler)_01.jpg",
+  },
+  臺灣鷦眉: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/Taiwan%20Wren-Babbler%20-%20Taiwan%20S4E8523%20%2819551633761%29.jpg",
+    alt: "臺灣鷦眉的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:Taiwan_Wren-Babbler_-_Taiwan_S4E8523_(19551633761).jpg",
+  },
+  褐頭花翼: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/Streak-throated%20Fulvetta%20-%20Taiwan%20S4E6852%20%2819551581381%29.jpg",
+    alt: "褐頭花翼的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:Streak-throated_Fulvetta_-_Taiwan_S4E6852_(19551581381).jpg",
+  },
+  大彎嘴: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/Black-necklaced%20scimitar%20babbler%20%28Erythrogenys%20erythrocnemis%29.jpg",
+    alt: "大彎嘴的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:Black-necklaced_scimitar_babbler_(Erythrogenys_erythrocnemis).jpg",
+  },
+  臺灣噪眉: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/White-whiskered%20Laughingthrush%20-%20Taiwan%20S4E6781%20%2818866886884%29.jpg",
+    alt: "臺灣噪眉的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:White-whiskered_Laughingthrush_-_Taiwan_S4E6781_(18866886884).jpg",
+  },
+  紋翼畫眉: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/Actinodura%20morrisoniana%20-Taiwan-8.jpg",
+    alt: "紋翼畫眉的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:Actinodura_morrisoniana_-Taiwan-8.jpg",
+  },
+  臺灣畫眉: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/Garrulax%20taewanus%2C%20Taipei%201.jpg",
+    alt: "臺灣畫眉的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:Garrulax_taewanus,_Taipei_1.jpg",
+  },
+  臺灣白喉噪眉: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/Rufous-crowned%20laughing%20thrush.jpg",
+    alt: "臺灣白喉噪眉的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:Rufous-crowned_laughing_thrush.jpg",
+  },
+  棕噪眉: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/Pterorhinus%20poecilorhynchus.jpg",
+    alt: "棕噪眉的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:Pterorhinus_poecilorhynchus.jpg",
+  },
+  火冠戴菊鳥: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/Flamecrest%20%28Regulus%20goodfellowi%29.jpg",
+    alt: "火冠戴菊鳥的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:Flamecrest_(Regulus_goodfellowi).jpg",
+  },
+  白頭鶇: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/Taiwan%20Island%20Thrush%20-%20Taiwan%20S4E8123%20%2816614712683%29.jpg",
+    alt: "白頭鶇的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:Taiwan_Island_Thrush_-_Taiwan_S4E8123_(16614712683).jpg",
+  },
+  黃腹琉璃: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/2014-03-29%20Niltava%20vivida%20vivida%20%28Vivid%20Niltava%29%20male.jpg",
+    alt: "黃腹琉璃的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:2014-03-29_Niltava_vivida_vivida_(Vivid_Niltava)_male.jpg",
+  },
+  小翼鶇: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/Brachypteryx%20goodfellowi%2040511170.jpg",
+    alt: "小翼鶇的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:Brachypteryx_goodfellowi_40511170.jpg",
+  },
+  臺灣白眉林鴝: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/White-browed%20Bush-Robin%20-%20Taiwan%20S4E7041%20%2819357355252%29.jpg",
+    alt: "臺灣白眉林鴝的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:White-browed_Bush-Robin_-_Taiwan_S4E7041_(19357355252).jpg",
+    note: "來源頁採用舊分類或英文俗名；此處對應台灣白眉林鴝使用，避免誤放其他林鴝照片。",
+  },
+  栗背林鴝: {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/2014-03-28%20Tarsiger%20johnstoniae%20%28Collared%20Bush%20Robin%29%20male%2001.jpg",
+    alt: "栗背林鴝的真實鳥類照片",
+    credit: "Wikimedia Commons",
+    page: "https://commons.wikimedia.org/wiki/File:2014-03-28_Tarsiger_johnstoniae_(Collared_Bush_Robin)_male_01.jpg",
+  },
   野鴿: {
     src: "https://commons.wikimedia.org/wiki/Special:FilePath/Rock%20dove%20-%20natures%20pics.jpg",
     alt: "野鴿的真實鳥類照片",
