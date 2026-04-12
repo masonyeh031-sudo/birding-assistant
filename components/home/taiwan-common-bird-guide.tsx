@@ -23,6 +23,28 @@ const guideFilters = [
 
 type GuideFilter = (typeof guideFilters)[number]["key"];
 
+const habitatFilters = [
+  { key: "all", label: "全部棲地", description: "不限制鳥類出現環境" },
+  { key: "都市公園 / 校園 / 住宅區", label: "都市 / 校園", description: "生活圈、公園、校園與住宅區" },
+  { key: "山林 / 林緣步道", label: "山林 / 林緣", description: "山區步道、森林與林緣" },
+  { key: "水邊濕地 / 河川湖泊", label: "水邊 / 濕地", description: "濕地、河川、湖泊與河口" },
+  { key: "草地 / 農田 / 開闊地", label: "草地 / 農田", description: "草生地、農田與開闊地" },
+  { key: "都市上空 / 河濱空域", label: "空域 / 河濱", description: "燕科、雨燕與河濱上空" },
+] as const;
+
+type HabitatFilter = (typeof habitatFilters)[number]["key"];
+
+const sizeFilters = [
+  { key: "all", label: "全部體型", description: "不限制鳥類大小" },
+  { key: "小型鳥", label: "小型鳥", description: "麻雀、繡眼大小" },
+  { key: "中小型鳥", label: "中小型鳥", description: "白頭翁、伯勞大小" },
+  { key: "中型鳥", label: "中型鳥", description: "斑鳩、八哥、水雞大小" },
+  { key: "中大型鳥", label: "中大型鳥", description: "喜鵲、夜鷺、鴨類大小" },
+  { key: "大型鳥", label: "大型鳥", description: "蒼鷺、黑鳶、大冠鷲大小" },
+] as const;
+
+type SizeFilter = (typeof sizeFilters)[number]["key"];
+
 const birdCardByName = new Map(birdCards.map((bird) => [bird.name, bird]));
 const verifiedPhotoAliasByName: Record<string, string> = {
   斯氏繡眼: "綠繡眼",
@@ -405,6 +427,8 @@ function GuideCard({ bird, onOpen }: { bird: GuideBird; onOpen: (bird: GuideBird
 export function TaiwanCommonBirdGuide() {
   const [query, setQuery] = useState("");
   const [guideFilter, setGuideFilter] = useState<GuideFilter>("all");
+  const [habitatFilter, setHabitatFilter] = useState<HabitatFilter>("all");
+  const [sizeFilter, setSizeFilter] = useState<SizeFilter>("all");
   const [selectedBird, setSelectedBird] = useState<GuideBird | null>(null);
 
   const filteredBirds = useMemo(() => {
@@ -418,16 +442,20 @@ export function TaiwanCommonBirdGuide() {
           : guideFilter === "endemic"
             ? bird.isTaiwanEndemic
             : bird.season === (guideFilter === "winter" ? "冬候鳥" : "夏候鳥");
+      const matchesHabitat = habitatFilter === "all" ? true : bird.habitat === habitatFilter;
+      const matchesSize = sizeFilter === "all" ? true : bird.size === sizeFilter;
 
-      return matchesQuery && matchesGuideFilter;
+      return matchesQuery && matchesGuideFilter && matchesHabitat && matchesSize;
     });
-  }, [query, guideFilter]);
+  }, [query, guideFilter, habitatFilter, sizeFilter]);
 
-  const hasActiveFilter = query || guideFilter !== "all";
+  const hasActiveFilter = query || guideFilter !== "all" || habitatFilter !== "all" || sizeFilter !== "all";
 
   function clearFilters() {
     setQuery("");
     setGuideFilter("all");
+    setHabitatFilter("all");
+    setSizeFilter("all");
   }
 
   return (
@@ -452,7 +480,14 @@ export function TaiwanCommonBirdGuide() {
           </div>
         </div>
 
-        <div className="mt-5 grid gap-3 md:grid-cols-4">
+        <div className="mt-5">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h3 className="text-sm font-black tracking-[0.18em] text-pine">季節與在地分類</h3>
+            <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-moss-500">
+              包含台灣特有種篩選
+            </span>
+          </div>
+          <div className="grid gap-3 md:grid-cols-4">
           {guideFilters.map((filter) => {
             const isSelected = guideFilter === filter.key;
 
@@ -474,6 +509,61 @@ export function TaiwanCommonBirdGuide() {
               </button>
             );
           })}
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <h3 className="mb-3 text-sm font-black tracking-[0.18em] text-pine">棲地篩選</h3>
+          <div className="grid gap-3 md:grid-cols-3">
+            {habitatFilters.map((filter) => {
+              const isSelected = habitatFilter === filter.key;
+
+              return (
+                <button
+                  key={filter.key}
+                  type="button"
+                  onClick={() => setHabitatFilter(filter.key)}
+                  className={`rounded-[24px] border px-4 py-4 text-left transition ${
+                    isSelected
+                      ? "border-pine bg-pine text-white shadow-card"
+                      : "border-moss-100 bg-white text-moss-700 hover:border-moss-300 hover:bg-moss-50"
+                  }`}
+                >
+                  <span className="block text-base font-bold">{filter.label}</span>
+                  <span className={`mt-1 block text-xs font-medium ${isSelected ? "text-white/75" : "text-moss-500"}`}>
+                    {filter.description}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <h3 className="mb-3 text-sm font-black tracking-[0.18em] text-pine">體型篩選</h3>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+            {sizeFilters.map((filter) => {
+              const isSelected = sizeFilter === filter.key;
+
+              return (
+                <button
+                  key={filter.key}
+                  type="button"
+                  onClick={() => setSizeFilter(filter.key)}
+                  className={`rounded-[24px] border px-4 py-4 text-left transition ${
+                    isSelected
+                      ? "border-pine bg-pine text-white shadow-card"
+                      : "border-moss-100 bg-white text-moss-700 hover:border-moss-300 hover:bg-moss-50"
+                  }`}
+                >
+                  <span className="block text-base font-bold">{filter.label}</span>
+                  <span className={`mt-1 block text-xs font-medium ${isSelected ? "text-white/75" : "text-moss-500"}`}>
+                    {filter.description}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {hasActiveFilter ? (
