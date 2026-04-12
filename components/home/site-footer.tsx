@@ -1,3 +1,5 @@
+import { guanNiaoRenBlog, guanNiaoRenChannel } from "@/lib/home-data";
+
 const footerColumns = [
   {
     title: "關於我們",
@@ -5,7 +7,17 @@ const footerColumns = [
   },
   {
     title: "聯絡方式",
-    content: "hello@birding-guide.test\n週一至週五 10:00 - 18:00",
+    content: "歡迎透過觀鳥人的公開頻道與文章頁面追蹤最新內容。",
+    links: [
+      {
+        label: "觀鳥人 YouTube 頻道",
+        href: guanNiaoRenChannel.channelUrl,
+      },
+      {
+        label: "觀鳥人部落格",
+        href: guanNiaoRenBlog.blogUrl,
+      },
+    ],
   },
   {
     title: "資料來源僅供參考",
@@ -31,6 +43,21 @@ export function SiteFooter() {
               <p className="mt-3 whitespace-pre-line text-sm leading-7 text-moss-100">
                 {column.content}
               </p>
+              {"links" in column && column.links?.length ? (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {column.links.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-full border border-white/18 bg-white/12 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white hover:text-pine"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              ) : null}
             </div>
           ))}
         </div>
