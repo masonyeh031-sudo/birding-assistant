@@ -1,6 +1,7 @@
 const navItems = [
   { label: "賞鳥助手", href: "/assistant" },
   { label: "台灣常見鳥類圖鑑", href: "/birds" },
+  { label: "台灣特有種圖鑑", href: "/endemic-birds" },
   { label: "台北捷運賞鳥推薦", href: "/mrt-spots" },
   { label: "觀鳥人部落格", href: "/blog" },
   { label: "觀鳥人YT頻道", href: "/youtube" },
