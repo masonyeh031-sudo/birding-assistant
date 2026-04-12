@@ -49,7 +49,7 @@ export function BirdUploadForm({
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-moss-500">
-            AI Bird ID Flow
+            賞鳥助手辨識流程
           </p>
           <h2 className="section-title mt-3 text-pine">先看照片，再用大小、環境與色塊輔助縮小候選</h2>
           <p className="section-copy mt-3 max-w-2xl">
@@ -92,7 +92,7 @@ export function BirdUploadForm({
           <div className="rounded-[30px] border border-moss-100 bg-white p-5">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h3 className="text-xl font-bold text-pine">鳥類大小自動預設器</h3>
+                <h3 className="text-xl font-bold text-pine">賞鳥助手大小預設</h3>
                 <p className="mt-2 text-sm leading-7 text-moss-600">
                   上傳照片後會先自動估計鳥體大小並預設選項；你可以直接改選，最後辨識一律採用你確認後的大小。
                 </p>

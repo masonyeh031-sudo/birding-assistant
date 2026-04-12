@@ -8,7 +8,7 @@ export default function Home() {
     <main className="shell pb-8">
       <SiteHeader />
       <PageIntro
-        eyebrow="Birding Assistant"
+        eyebrow="賞鳥助手"
         title="賞鳥助手"
         description="這一頁只保留分步辨識體驗。你可以像 Merlin Bird ID 一樣，依序加入照片、描述環境與特徵，再查看最可能的候選鳥種。"
       />

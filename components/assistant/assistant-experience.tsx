@@ -319,7 +319,7 @@ export function AssistantExperience() {
     if (!result) return;
 
     const text = [
-      "AI 鳥類辨識與觀察助手｜觀察紀錄",
+      "賞鳥助手｜觀察紀錄",
       "",
       `日期：${new Date().toLocaleDateString("zh-TW")}`,
       `環境：${environmentLabel || "未填"}`,

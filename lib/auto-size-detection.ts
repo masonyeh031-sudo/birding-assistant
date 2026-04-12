@@ -166,7 +166,7 @@ export async function detectBirdSizeFromImage(file: File): Promise<AutoSizeDetec
     confidence,
     reason:
       confidence === "低"
-        ? "Bird Size Auto Selector 以照片中央鳥體輪廓與前景佔比做初步估計，但這張照片主體可能偏小、背景干擾或對比不足，所以只是低信心建議，請手動確認。"
-        : "Bird Size Auto Selector 以照片中央鳥體輪廓、前景佔比與整體比例做初步估計，已先幫你預設大小；你仍可依現場印象手動修正。",
+        ? "賞鳥助手以照片中央鳥體輪廓與前景佔比做初步估計，但這張照片主體可能偏小、背景干擾或對比不足，所以只是低信心建議，請手動確認。"
+        : "賞鳥助手以照片中央鳥體輪廓、前景佔比與整體比例做初步估計，已先幫你預設大小；你仍可依現場印象手動修正。",
   };
 }

@@ -53,9 +53,9 @@ export function BirdSizeAutoSelector({
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.2em] text-moss-500">
-              Bird Size Auto Selector
+              賞鳥助手大小預設
             </p>
-            <h4 className="mt-2 text-xl font-black text-pine">鳥類大小自動預設器</h4>
+            <h4 className="mt-2 text-xl font-black text-pine">賞鳥助手大小預設</h4>
             <p className="mt-2 max-w-2xl text-sm leading-7 text-moss-600">
               上傳照片後會先根據鳥體輪廓、畫面佔比與外觀比例預設大小；這只是 AI 建議，你可以依現場印象直接改選。
             </p>

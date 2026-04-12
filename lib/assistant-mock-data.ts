@@ -80,7 +80,7 @@ export const defaultObservationForm: BirdObservationFormState = {
   size: "",
   autoDetectedSize: "",
   autoDetectedSizeConfidence: "",
-  autoDetectedSizeReason: "上傳照片後，鳥類大小自動預設器會先估計鳥體大小並預設選項。",
+  autoDetectedSizeReason: "上傳照片後，賞鳥助手會先估計鳥體大小並預設選項。",
   userSelectedSize: "",
   finalSelectedSize: "",
   colorTraits: [],

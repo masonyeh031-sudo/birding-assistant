@@ -33,7 +33,7 @@ export function SiteHeader() {
             />
           </div>
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-moss-500">Birding Guide</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-moss-500">賞鳥助手</p>
             <p className="text-lg font-semibold text-pine">賞鳥助手</p>
           </div>
         </a>

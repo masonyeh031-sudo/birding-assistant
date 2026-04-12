@@ -11,7 +11,7 @@ export function HeroSection({
       <div className="relative grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-[0.28em] text-moss-500">
-            Birding Assistant
+            賞鳥助手
           </p>
           <h1 className="mt-4 text-4xl font-black tracking-[0.02em] text-pine sm:text-5xl lg:text-6xl">
             賞鳥助手
