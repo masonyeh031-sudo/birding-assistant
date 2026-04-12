@@ -43,17 +43,20 @@ export const assistantEntryCards: Array<{
 ];
 
 export const environmentOptions: BirdFeature[] = [
-  { value: "urban-park", label: "都市公園", description: "社區公園、都會綠地、樹蔭步道" },
-  { value: "campus", label: "校園", description: "操場、校樹區、校園草地" },
-  { value: "residential", label: "住宅區 / 都市", description: "巷弄、社區庭院、建物周邊" },
-  { value: "forest", label: "森林", description: "低海拔林地、樹林邊緣、森林步道" },
-  { value: "mountain-trail", label: "山區步道", description: "山徑、林道、丘陵步道" },
-  { value: "wetland", label: "濕地", description: "濕地保護區、魚塭、泥灘邊緣" },
-  { value: "pond-lake", label: "池塘 / 湖泊", description: "公園池塘、水庫、湖泊" },
-  { value: "river-stream", label: "河川 / 溪流", description: "河岸、溪谷、河濱草地" },
-  { value: "farmland-grassland", label: "農田 / 草地", description: "田埂、草生地、開闊農耕區" },
-  { value: "seaside", label: "海邊", description: "沙灘、港區、海岸礁岩" },
-  { value: "estuary-flat", label: "河口 / 灘地", description: "出海口、紅樹林、潮間帶" },
+  { value: "urban", label: "都市", description: "街道、社區、建築物周邊與生活圈綠地" },
+  { value: "campus", label: "校園", description: "操場、校樹區、校園草地與校舍周邊" },
+  { value: "park", label: "公園", description: "都市公園、社區公園、樹蔭步道與花木區" },
+  { value: "forest", label: "森林", description: "低中海拔林地、樹林內部與林緣" },
+  { value: "mountain", label: "山區", description: "山徑、林道、丘陵步道與中高海拔環境" },
+  { value: "grassland", label: "草地", description: "開闊草生地、短草地、河濱草坡" },
+  { value: "shrubland", label: "灌叢", description: "灌木叢、竹林邊緣、荒地與林下濃密植被" },
+  { value: "farmland", label: "農田", description: "水田、旱田、田埂、農村邊緣" },
+  { value: "wetland", label: "濕地", description: "濕地保護區、魚塭、沼澤與潮濕開闊地" },
+  { value: "pond_lake", label: "池塘 / 湖泊", description: "公園池塘、水庫、湖泊與靜水水域" },
+  { value: "river_stream", label: "河川 / 溪流", description: "河岸、溪谷、溪石、河濱水域" },
+  { value: "estuary_mudflat", label: "河口 / 灘地", description: "出海口、泥灘、沙洲、紅樹林與潮間帶" },
+  { value: "coast", label: "海岸", description: "沙灘、港區、礁岩海岸與防波堤" },
+  { value: "ocean", label: "海洋", description: "近海、外海、船上觀察與海面飛行鳥類" },
 ];
 
 export const colorOptions: BirdFeature[] = [
@@ -72,7 +75,8 @@ export const colorOptions: BirdFeature[] = [
 export const defaultObservationForm: BirdObservationFormState = {
   imagePreview: null,
   imageName: "",
-  environment: "urban-park",
+  environment: "park",
+  selectedEnvironment: "park",
   size: "",
   colorTraits: [],
   autoDetectedColors: [],
@@ -427,7 +431,8 @@ export { birdSizeOptions };
 export const sampleObservation: BirdObservationFormState = {
   imagePreview: getBirdImage("黑冠麻鷺").imageSrc,
   imageName: "sample-malayan-night-heron.jpg",
-  environment: "urban-park",
+  environment: "forest",
+  selectedEnvironment: "forest",
   size: "medium-large",
   colorTraits: ["brown", "tan", "black"],
   autoDetectedColors: ["brown", "tan"],

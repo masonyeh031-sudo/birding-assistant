@@ -23,6 +23,7 @@ export type BirdObservationFormState = {
   imagePreview: string | null;
   imageName: string;
   environment: string;
+  selectedEnvironment: string;
   size: BirdSizeSelection;
   colorTraits: string[];
   autoDetectedColors: string[];

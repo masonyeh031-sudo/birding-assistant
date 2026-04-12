@@ -85,7 +85,8 @@ export function AssistantExperience() {
     };
   }, []);
 
-  const environmentLabel = getEnvironmentLabel(form.environment);
+  const selectedEnvironment = form.selectedEnvironment || form.environment;
+  const environmentLabel = getEnvironmentLabel(selectedEnvironment);
   const sizeLabel = getBirdSizeLabel(form.size);
 
   function updateForm(updater: (current: BirdObservationFormState) => BirdObservationFormState) {
@@ -95,7 +96,7 @@ export function AssistantExperience() {
   }
 
   function handleEnvironmentChange(value: string) {
-    updateForm((current) => ({ ...current, environment: value }));
+    updateForm((current) => ({ ...current, environment: value, selectedEnvironment: value }));
   }
 
   function handleSizeChange(value: BirdObservationFormState["size"]) {

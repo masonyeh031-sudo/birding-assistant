@@ -81,10 +81,10 @@ function getColorInfluenceSummary(form: BirdObservationFormState) {
 
 function getDecisiveFactor(form: BirdObservationFormState) {
   if (form.size) {
-    return `最影響排序的是照片輪廓、體型比例與鳥類大小「${labelForSize(form.size)}」；嘴型、腿長、環境與最終色塊再用來縮小候選。`;
+    return `最影響排序的是照片輪廓、類群判斷、鳥類大小「${labelForSize(form.size)}」與環境「${labelForEnvironment(getSelectedEnvironment(form))}」；嘴型、腿長與最終色塊再用來縮小候選。`;
   }
 
-  return "最影響排序的是照片輪廓、嘴型與腿長；因為尚未選擇鳥類大小，環境與最終顏色只作為輔助條件。";
+  return `最影響排序的是照片輪廓、類群判斷與環境「${labelForEnvironment(getSelectedEnvironment(form))}」；因為尚未選擇鳥類大小，嘴型、腿長與顏色會再作為後段輔助。`;
 }
 
 const colorMap: Record<string, string[]> = {
@@ -183,6 +183,17 @@ const genericCandidateMetadata: Record<
 
 function mapEnvironmentToProfileKeys(value: string) {
   const map: Record<string, string[]> = {
+    urban: ["residential", "urban-park", "campus"],
+    park: ["urban-park", "campus", "residential"],
+    mountain: ["mountain-trail", "forest"],
+    grassland: ["farmland-grassland", "urban-park"],
+    shrubland: ["forest", "mountain-trail", "farmland-grassland"],
+    farmland: ["farmland-grassland"],
+    pond_lake: ["pond-lake", "wetland", "river-stream"],
+    river_stream: ["river-stream", "pond-lake", "wetland"],
+    estuary_mudflat: ["estuary-flat", "seaside", "wetland"],
+    coast: ["seaside", "estuary-flat", "wetland"],
+    ocean: ["seaside", "estuary-flat"],
     "urban-park": ["urban-park", "campus", "residential"],
     campus: ["campus", "urban-park", "residential"],
     residential: ["residential", "urban-park", "campus"],
@@ -201,6 +212,17 @@ function mapEnvironmentToProfileKeys(value: string) {
 
 function mapEnvironmentToApiHabitat(value: string) {
   const map: Record<string, string> = {
+    urban: "urban",
+    park: "park",
+    mountain: "forest-edge",
+    grassland: "park",
+    shrubland: "forest-edge",
+    farmland: "park",
+    pond_lake: "water",
+    river_stream: "water",
+    estuary_mudflat: "water",
+    coast: "water",
+    ocean: "water",
     "urban-park": "park",
     campus: "urban",
     residential: "urban",
@@ -219,6 +241,17 @@ function mapEnvironmentToApiHabitat(value: string) {
 
 function labelForEnvironment(value: string) {
   const labels: Record<string, string> = {
+    urban: "都市",
+    park: "公園",
+    mountain: "山區",
+    grassland: "草地",
+    shrubland: "灌叢",
+    farmland: "農田",
+    pond_lake: "池塘 / 湖泊",
+    river_stream: "河川 / 溪流",
+    estuary_mudflat: "河口 / 灘地",
+    coast: "海岸",
+    ocean: "海洋",
     "urban-park": "都市公園",
     campus: "校園",
     residential: "住宅區 / 都市",
@@ -254,6 +287,10 @@ function labelForColor(value: string) {
 
 function labelForSize(value: BirdObservationFormState["size"]) {
   return value ? getBirdSizeLabel(value) : "未填";
+}
+
+function getSelectedEnvironment(form: BirdObservationFormState) {
+  return form.selectedEnvironment || form.environment;
 }
 
 function buildSizeFit(name: string, selectedSize: BirdObservationFormState["size"]) {
@@ -350,10 +387,13 @@ function scoreProfile(profile: BirdProfile, form: BirdObservationFormState) {
     }
   }
 
-  const environmentMatches = mapEnvironmentToProfileKeys(form.environment);
+  const environmentMatches = mapEnvironmentToProfileKeys(getSelectedEnvironment(form));
   if (environmentMatches.some((item) => profile.environments.includes(item))) {
-    score += 5;
+    score += 7;
     reasoning.push(`觀察環境和 ${profile.topMatch.chineseName} 常見棲地相近。`);
+  } else {
+    score -= 8;
+    reasoning.push(`你選的環境和 ${profile.topMatch.chineseName} 常見棲地不太吻合，因此已降權。`);
   }
 
   const matchedColors = form.colorTraits.filter((color) => profile.colorTraits.includes(color));
@@ -414,7 +454,7 @@ function buildLocalResponse(form: BirdObservationFormState): BirdAnalysisRespons
     combinedLikely: isCloseCall ? buildCombinedLikely(top.topMatch.chineseName, secondName) : undefined,
     likelyGroup: inferLikelyGroup(top.topMatch.chineseName),
     uncertaintyFactors: topScore <= 0 ? ["目前主要只靠少量輔助線索，還沒有穩定的照片證據。"] : undefined,
-    rankingChangeNote: "目前沒有啟用影像模型，所以這次沒有真的做照片初判與條件重排，只能先用條件做保守排序。",
+    rankingChangeNote: `目前沒有啟用影像模型，所以這次以站內資料做保守排序；環境「${labelForEnvironment(getSelectedEnvironment(form))}」已作為重要篩選條件，環境不符的候選會被降權。`,
     eliminatedCandidates: toEliminatedCandidates(initialCandidates, [
       top.topMatch.chineseName,
       ...alternativeMatches.map((item) => item.chineseName),
@@ -435,7 +475,7 @@ function buildLocalResponse(form: BirdObservationFormState): BirdAnalysisRespons
       ? "目前先以本地輔助模式綜合照片、大小、環境與色塊做排序。"
       : "目前還沒有照片，所以這只是依大小、環境與色塊做的保守候選清單。",
     keyFeatures: top.visualTraits,
-    environmentFit: `你選的是「${labelForEnvironment(form.environment)}」，這和 ${top.topMatch.chineseName} 的常見環境${mapEnvironmentToProfileKeys(form.environment).some((item) => top.environments.includes(item)) ? "相當吻合" : "只有部分吻合"}。`,
+    environmentFit: `你選的是「${labelForEnvironment(getSelectedEnvironment(form))}」，這和 ${top.topMatch.chineseName} 的常見環境${mapEnvironmentToProfileKeys(getSelectedEnvironment(form)).some((item) => top.environments.includes(item)) ? "相當吻合，因此提高排名" : "不完全吻合，因此系統已把環境衝突納入降權"}。`,
     sizeFit: buildSizeFit(top.topMatch.chineseName, form.size),
     colorFit:
       form.colorTraits.length > 0
@@ -547,7 +587,7 @@ function transformApiResult(apiResult: ApiBirdIdResponse, form: BirdObservationF
       apiResult.photoClues?.slice(0, 4) ??
       topProfile?.visualTraits ??
       [topCard?.clue ?? "建議先回頭觀察照片裡的主要外觀線索。"],
-    environmentFit: `你選的是「${labelForEnvironment(form.environment)}」，系統會把環境當成實際篩選條件；若候選鳥種和這個環境明顯衝突，就會被降權或淘汰。`,
+    environmentFit: `你選的是「${labelForEnvironment(getSelectedEnvironment(form))}」，系統會把環境當成實際篩選條件；若候選鳥種和這個環境明顯衝突，就會被降權或淘汰。`,
     sizeFit: buildSizeFit(topCandidate.name, form.size),
     colorFit:
       form.colorTraits.length > 0
@@ -582,9 +622,10 @@ async function analyzeWithApi(form: BirdObservationFormState) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       imageDataUrl: form.imagePreview,
-      habitat: mapEnvironmentToApiHabitat(form.environment),
-      environmentKey: form.environment,
-      environmentLabel: labelForEnvironment(form.environment),
+      habitat: mapEnvironmentToApiHabitat(getSelectedEnvironment(form)),
+      environmentKey: getSelectedEnvironment(form),
+      selectedEnvironment: getSelectedEnvironment(form),
+      environmentLabel: labelForEnvironment(getSelectedEnvironment(form)),
       size: form.size || undefined,
       traits: form.colorTraits,
       autoDetectedColors: form.autoDetectedColors,

@@ -12,6 +12,7 @@ type BirdIdRequest = {
   imageDataUrl?: string;
   habitat?: string;
   environmentKey?: string;
+  selectedEnvironment?: string;
   environmentLabel?: string;
   observationSpot?: string;
   size?: string;
@@ -217,6 +218,83 @@ const exactEnvironmentRules: Record<
     conflictTraits: string[];
   }
 > = {
+  urban: {
+    label: "都市",
+    habitats: ["urban"],
+    supportTraits: ["perch-open", "ground-walking", "flock"],
+    conflictHabitats: ["water", "forest-edge"],
+    conflictTraits: ["waterbird", "shorebird", "long-leg", "long-neck"],
+  },
+  park: {
+    label: "公園",
+    habitats: ["park", "urban"],
+    supportTraits: ["perch-open", "ground-walking", "flock"],
+    conflictHabitats: [],
+    conflictTraits: [],
+  },
+  mountain: {
+    label: "山區",
+    habitats: ["forest-edge"],
+    supportTraits: ["perch-open", "tail-up", "head-pattern"],
+    conflictHabitats: ["urban", "water"],
+    conflictTraits: ["waterbird", "shorebird", "near-water"],
+  },
+  grassland: {
+    label: "草地",
+    habitats: ["park", "forest-edge"],
+    supportTraits: ["ground-walking", "flock", "perch-open"],
+    conflictHabitats: [],
+    conflictTraits: [],
+  },
+  shrubland: {
+    label: "灌叢",
+    habitats: ["forest-edge", "park"],
+    supportTraits: ["tail-up", "head-pattern", "ground-walking"],
+    conflictHabitats: ["water"],
+    conflictTraits: ["shorebird", "long-neck"],
+  },
+  farmland: {
+    label: "農田",
+    habitats: ["park", "water", "forest-edge"],
+    supportTraits: ["ground-walking", "flock", "waterbird"],
+    conflictHabitats: [],
+    conflictTraits: [],
+  },
+  pond_lake: {
+    label: "池塘 / 湖泊",
+    habitats: ["water", "park"],
+    supportTraits: ["waterbird", "near-water", "long-leg"],
+    conflictHabitats: ["forest-edge"],
+    conflictTraits: [],
+  },
+  river_stream: {
+    label: "河川 / 溪流",
+    habitats: ["water"],
+    supportTraits: ["waterbird", "near-water", "long-bill", "long-leg"],
+    conflictHabitats: ["urban"],
+    conflictTraits: [],
+  },
+  estuary_mudflat: {
+    label: "河口 / 灘地",
+    habitats: ["water"],
+    supportTraits: ["waterbird", "shorebird", "winter-migrant", "long-leg", "long-bill"],
+    conflictHabitats: ["urban", "forest-edge"],
+    conflictTraits: [],
+  },
+  coast: {
+    label: "海岸",
+    habitats: ["water"],
+    supportTraits: ["waterbird", "shorebird", "long-leg", "long-bill"],
+    conflictHabitats: ["urban", "forest-edge"],
+    conflictTraits: [],
+  },
+  ocean: {
+    label: "海洋",
+    habitats: ["water"],
+    supportTraits: ["waterbird", "shorebird", "long-bill"],
+    conflictHabitats: ["urban", "forest-edge"],
+    conflictTraits: ["tail-up", "eye-ring"],
+  },
   "urban-park": {
     label: "都市公園",
     habitats: ["park", "urban"],
@@ -491,7 +569,8 @@ function scoreEnvironmentMatch(
   bird: (typeof birdCards)[number]
 ) {
   const reasons: string[] = [];
-  const rule = body.environmentKey ? exactEnvironmentRules[body.environmentKey] : undefined;
+  const selectedEnvironment = body.selectedEnvironment || body.environmentKey;
+  const rule = selectedEnvironment ? exactEnvironmentRules[selectedEnvironment] : undefined;
 
   if (rule) {
     let score = 0;
@@ -509,20 +588,20 @@ function scoreEnvironmentMatch(
     );
 
     if (habitatMatched) {
-      score += 8;
+      score += 10;
       reasons.push(`環境「${rule.label}」和此鳥常見棲地相符`);
     } else {
-      score -= 12;
+      score -= 14;
       reasons.push(`環境「${rule.label}」和此鳥常見棲地不吻合`);
     }
 
     if (supportTraits.length > 0) {
-      score += 4;
+      score += 5;
       reasons.push(`環境線索支持「${supportTraits.slice(0, 2).map(labelForValue).join("、")}」`);
     }
 
     if (habitatConflict || traitConflict) {
-      score -= 10;
+      score -= 12;
       reasons.push(`和「${rule.label}」常見鳥類條件有明顯衝突`);
     }
 
@@ -830,7 +909,7 @@ ${birdCatalog}
 第二階段：使用者條件修正與重排序
 - 當使用者提供顏色、環境、棲地、體型大小、行為 / 停棲位置、地區、日期 / 季節等條件後，你必須重新評估並重排候選。
 - 條件不可只是參考文字，而必須真正影響最後排序。
-- 重新排序時，請嚴格依下列優先順序修正：體型大小 > 類群輪廓 > 環境 / 棲地 > 嘴型 / 腿長 > 顏色 > 行為 > 地區 / 季節。
+- 重新排序時，請嚴格依下列優先順序修正：照片中的體型與輪廓 > 類群判斷 > 環境篩選 > 嘴型與腿長 > 顏色 > 行為 / 停棲位置 > 地區 / 季節。
 - 你必須檢查原本候選是否與新增條件衝突；若衝突明顯，請降低排名或淘汰。
 - 若有更符合條件的鳥種，請補入新的候選。
 - 當使用者條件與原始照片候選發生衝突時，你不可固守原答案，也不可替原本答案辯護，必須真的重排。
@@ -878,7 +957,7 @@ Step 5｜先在內部思考 Top 5 候選，再輸出 Top 3
 
 【使用者提供資料】
 - 國家：台灣
-- 環境選擇：${body.environmentLabel ?? body.habitat ?? "未知"}${body.environmentKey ? `（環境代碼：${body.environmentKey}）` : ""}
+- 環境篩選：${body.environmentLabel ?? body.habitat ?? "未知"}${(body.selectedEnvironment || body.environmentKey) ? `（環境代碼：${body.selectedEnvironment || body.environmentKey}）` : ""}
 - 地點補充：${body.location ?? "未提供"}
 - 日期：未提供
 - 停留位置 / 姿態：${body.observationSpot ?? "未知"}
@@ -893,6 +972,7 @@ Step 5｜先在內部思考 Top 5 候選，再輸出 Top 3
 【本工具這次必須特別遵守的重點】
 - 你的任務是根據鳥類照片，再結合使用者後續選擇的環境、鳥的大小、顏色區塊，找出最符合照片中的鳥類。
 - 照片是主要依據，但環境、大小、顏色是重要篩選條件，不可忽略。
+- 環境篩選不可只是參考文字，而必須真的影響排序；與環境高度吻合的候選要提高排名，與環境明顯衝突的候選要降低排名或淘汰。
 - 辨識鳥種時，請以照片中的體型輪廓、整體比例、嘴型、腿長為主，再結合鳥類大小、環境與使用者最終確認的顏色區塊重新排序候選。
 - 不可只看顏色猜鳥，也不可只看照片初步印象就固定答案。
 - 系統自動預設顏色只是建議；如果使用者手動調整顏色，最終顏色必須以「使用者最終確認顏色」為準。
@@ -901,6 +981,8 @@ Step 5｜先在內部思考 Top 5 候選，再輸出 Top 3
 - 最終輸出 Top 3 候選時，請說明自動預設顏色是否真的影響排序；如果沒有影響，請明確說明主要仍是輪廓、大小、嘴型或腿長。
 - 如果使用者選的是大型鳥，請不要優先輸出白頭翁、麻雀、綠繡眼等小型鳥類。
 - 如果使用者選的是森林或山區棲地，請不要優先輸出典型都市小型鳥類，除非照片特徵非常明確。
+- 如果使用者選的是海洋、海岸或河口 / 灘地，請不要優先輸出內陸森林鳥類，除非照片特徵非常明確。
+- 如果使用者選的是濕地、池塘 / 湖泊或河川 / 溪流，請不要優先輸出純陸域樹棲小型鳥類，除非照片特徵非常明確。
 - 如果大小與環境明顯不符合某候選，請降低排名或直接淘汰，並在 eliminatedCandidates 說明。
 - 顏色只可用來幫助縮小範圍，不可單獨決定鳥種。
 - 若資訊不足，不可假裝非常確定，必須保守輸出候選清單。
@@ -915,7 +997,7 @@ Step 5｜先在內部思考 Top 5 候選，再輸出 Top 3
 - 請額外輸出 likelyGroup，代表目前最可能的大類群。
 - 請額外輸出 uncertaintyFactors，列出造成不確定的主因。
 - 請額外輸出 rerankSummary，說明為什麼新的排序比原本更合理。
-- 請額外輸出 eliminatedCandidates，列出哪些原候選被淘汰，以及淘汰原因。
+- 請額外輸出 eliminatedCandidates，列出哪些原候選被淘汰，以及淘汰原因；原因中請明確提到是否因環境不符而被降權。
 
 請以結構化 JSON 回覆，重點放在照片實際可見線索與條件重排後的保守判斷。
 `.trim();

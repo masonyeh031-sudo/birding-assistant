@@ -4,7 +4,7 @@ import { AutoColorDetector } from "@/components/assistant/auto-color-detector";
 import { BirdPhotoUploader } from "@/components/assistant/bird-photo-uploader";
 import { BirdSizeSelector } from "@/components/assistant/bird-size-selector";
 import { ColorChipSelector } from "@/components/assistant/color-chip-selector";
-import { HabitatSelector } from "@/components/assistant/habitat-selector";
+import { EnvironmentSelector } from "@/components/assistant/environment-selector";
 import type {
   BirdFeature,
   BirdObservationFormState,
@@ -70,9 +70,9 @@ export function BirdUploadForm({
           <div className="rounded-[30px] border border-moss-100 bg-sand p-5">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h3 className="text-xl font-bold text-pine">環境選擇</h3>
+                <h3 className="text-xl font-bold text-pine">環境篩選</h3>
                 <p className="mt-2 text-sm leading-7 text-moss-600">
-                  把你看到鳥的地方點出來。這一步只是幫忙縮小候選，不會覆蓋照片本身的外觀線索。
+                  把你看到鳥的地點與棲地點出來。環境會被當成真正的篩選條件：吻合會提高排名，明顯衝突會降低排名或淘汰。
                 </p>
               </div>
               <span className="rounded-full border border-moss-200 bg-white px-4 py-2 text-xs font-semibold text-moss-600">
@@ -81,7 +81,11 @@ export function BirdUploadForm({
             </div>
 
             <div className="mt-5">
-              <HabitatSelector environments={environments} value={form.environment} onChange={onEnvironmentChange} />
+              <EnvironmentSelector
+                environments={environments}
+                value={form.selectedEnvironment || form.environment}
+                onChange={onEnvironmentChange}
+              />
             </div>
           </div>
 
