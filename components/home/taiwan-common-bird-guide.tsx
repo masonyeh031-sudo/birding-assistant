@@ -14,13 +14,14 @@ type VerifiedGuideImage = {
   note?: string;
 };
 
-const seasonFilters = [
+const guideFilters = [
   { key: "all", label: "都是常見鳥", description: "顯示完整 100 張卡片" },
   { key: "winter", label: "冬候鳥", description: "秋冬來台或冬季較常見" },
   { key: "summer", label: "夏候鳥", description: "春夏繁殖或夏季較常見" },
+  { key: "endemic", label: "台灣特有種", description: "只看台灣原生且全球僅分布於台灣的鳥種" },
 ] as const;
 
-type SeasonFilter = (typeof seasonFilters)[number]["key"];
+type GuideFilter = (typeof guideFilters)[number]["key"];
 
 const birdCardByName = new Map(birdCards.map((bird) => [bird.name, bird]));
 const verifiedPhotoAliasByName: Record<string, string> = {
@@ -354,9 +355,16 @@ function GuideCard({ bird, onOpen }: { bird: GuideBird; onOpen: (bird: GuideBird
             </p>
             <h3 className="mt-2 text-2xl font-bold text-pine">{bird.chineseName}</h3>
           </div>
-          <span className="rounded-full bg-moss-50 px-3 py-1 text-xs font-semibold text-moss-700">
-            {bird.size}
-          </span>
+          <div className="flex flex-col items-end gap-2">
+            <span className="rounded-full bg-moss-50 px-3 py-1 text-xs font-semibold text-moss-700">
+              {bird.size}
+            </span>
+            {bird.isTaiwanEndemic ? (
+              <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-pine">
+                台灣特有種
+              </span>
+            ) : null}
+          </div>
         </div>
 
         <div className="mt-4 space-y-3 text-sm leading-6 text-moss-700">
@@ -396,26 +404,30 @@ function GuideCard({ bird, onOpen }: { bird: GuideBird; onOpen: (bird: GuideBird
 
 export function TaiwanCommonBirdGuide() {
   const [query, setQuery] = useState("");
-  const [seasonFilter, setSeasonFilter] = useState<SeasonFilter>("all");
+  const [guideFilter, setGuideFilter] = useState<GuideFilter>("all");
   const [selectedBird, setSelectedBird] = useState<GuideBird | null>(null);
 
   const filteredBirds = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
-    const targetSeason = seasonFilter === "winter" ? "冬候鳥" : "夏候鳥";
 
     return taiwanCommonGuideBirds.filter((bird) => {
       const matchesQuery = normalizedQuery ? bird.chineseName.toLowerCase().includes(normalizedQuery) : true;
-      const matchesSeason = seasonFilter === "all" ? true : bird.season === targetSeason;
+      const matchesGuideFilter =
+        guideFilter === "all"
+          ? true
+          : guideFilter === "endemic"
+            ? bird.isTaiwanEndemic
+            : bird.season === (guideFilter === "winter" ? "冬候鳥" : "夏候鳥");
 
-      return matchesQuery && matchesSeason;
+      return matchesQuery && matchesGuideFilter;
     });
-  }, [query, seasonFilter]);
+  }, [query, guideFilter]);
 
-  const hasActiveFilter = query || seasonFilter !== "all";
+  const hasActiveFilter = query || guideFilter !== "all";
 
   function clearFilters() {
     setQuery("");
-    setSeasonFilter("all");
+    setGuideFilter("all");
   }
 
   return (
@@ -440,15 +452,15 @@ export function TaiwanCommonBirdGuide() {
           </div>
         </div>
 
-        <div className="mt-5 grid gap-3 md:grid-cols-3">
-          {seasonFilters.map((filter) => {
-            const isSelected = seasonFilter === filter.key;
+        <div className="mt-5 grid gap-3 md:grid-cols-4">
+          {guideFilters.map((filter) => {
+            const isSelected = guideFilter === filter.key;
 
             return (
               <button
                 key={filter.key}
                 type="button"
-                onClick={() => setSeasonFilter(filter.key)}
+                onClick={() => setGuideFilter(filter.key)}
                 className={`rounded-[24px] border px-4 py-4 text-left transition ${
                   isSelected
                     ? "border-pine bg-pine text-white shadow-card"
@@ -525,6 +537,12 @@ export function TaiwanCommonBirdGuide() {
                   <div className="rounded-2xl bg-white px-4 py-3 ring-1 ring-moss-100">
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">季節狀態</p>
                     <p className="mt-2 text-sm font-semibold text-pine">{selectedBird.season}</p>
+                  </div>
+                  <div className="rounded-2xl bg-emerald-50 px-4 py-3 ring-1 ring-emerald-100">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">在地分類</p>
+                    <p className="mt-2 text-sm font-semibold text-pine">
+                      {selectedBird.isTaiwanEndemic ? "台灣特有種" : "非台灣特有種"}
+                    </p>
                   </div>
                 </div>
 

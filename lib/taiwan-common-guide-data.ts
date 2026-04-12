@@ -7,6 +7,7 @@ export type TaiwanCommonGuideBird = {
   size: string;
   colors: string[];
   season: "常見鳥" | "冬候鳥" | "夏候鳥";
+  isTaiwanEndemic: boolean;
   group: string;
   intro: string;
   imageTone: string;
@@ -233,6 +234,20 @@ const summerVisitors = new Set([
   "赤腹鷹",
 ]);
 
+const taiwanEndemicSpecies = new Set([
+  "五色鳥",
+  "台灣藍鵲",
+  "冠羽畫眉",
+  "白耳畫眉",
+  "山紅頭",
+  "小彎嘴",
+  "繡眼畫眉",
+  "黃胸藪眉",
+  "赤腹山雀",
+  "黃山雀",
+  "台灣竹雞",
+]);
+
 function inferHabitat(name: string) {
   if (waterBirds.has(name)) return "水邊濕地 / 河川湖泊";
   if (forestBirds.has(name)) return "山林 / 林緣步道";
@@ -314,6 +329,7 @@ export const taiwanCommonGuideBirds: TaiwanCommonGuideBird[] = taiwanCommonGuide
     size: inferSize(chineseName),
     colors: inferColors(chineseName),
     season: inferSeason(chineseName),
+    isTaiwanEndemic: taiwanEndemicSpecies.has(chineseName),
     group: inferGroup(chineseName),
     intro: inferIntro(chineseName),
     imageTone: inferTone(chineseName),
