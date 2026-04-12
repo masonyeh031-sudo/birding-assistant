@@ -1,9 +1,12 @@
+import { taiwanEndemicBirds } from "@/lib/taiwan-endemic-bird-data";
+
 export type TaiwanCommonGuideBird = {
   id: number;
   chineseName: string;
   englishName: string;
   scientificName: string;
   habitat: string;
+  habitatCategory: string;
   size: string;
   colors: string[];
   season: "常見鳥" | "冬候鳥" | "夏候鳥";
@@ -79,7 +82,7 @@ export const taiwanCommonGuideBirdNames = [
   "黑面琵鷺",
   "普通鸕鶿",
   "彩鷸",
-  "台灣藍鵲",
+  "臺灣藍鵲",
   "冠羽畫眉",
   "白耳畫眉",
   "山紅頭",
@@ -96,7 +99,7 @@ export const taiwanCommonGuideBirdNames = [
   "鉛色水鶇",
   "白腹鶇",
   "金背鳩",
-  "台灣竹雞",
+  "臺灣竹雞",
   "領角鴞",
   "褐鷹鴞",
   "大冠鷲",
@@ -114,7 +117,15 @@ export const taiwanCommonGuideBirdNames = [
   "日本樹鶯",
   "藍磯鶇",
   "鵲鴝",
-] as const;
+];
+
+const baseCommonGuideBirdNameSet = new Set(taiwanCommonGuideBirdNames);
+
+taiwanEndemicBirds.forEach((bird) => {
+  if (!baseCommonGuideBirdNameSet.has(bird.chineseName)) {
+    taiwanCommonGuideBirdNames.push(bird.chineseName);
+  }
+});
 
 const waterBirds = new Set([
   "黑冠麻鷺",
@@ -234,19 +245,14 @@ const summerVisitors = new Set([
   "赤腹鷹",
 ]);
 
-const taiwanEndemicSpecies = new Set([
-  "五色鳥",
-  "台灣藍鵲",
-  "冠羽畫眉",
-  "白耳畫眉",
-  "山紅頭",
-  "小彎嘴",
-  "繡眼畫眉",
-  "黃胸藪眉",
-  "赤腹山雀",
-  "黃山雀",
-  "台灣竹雞",
-]);
+const taiwanEndemicByName = new Map(taiwanEndemicBirds.map((bird) => [bird.chineseName, bird]));
+const taiwanEndemicSpecies = new Set(taiwanEndemicBirds.map((bird) => bird.chineseName));
+
+function getHabitatCategoryFromEndemicTag(tag: (typeof taiwanEndemicBirds)[number]["habitatTag"]) {
+  if (tag === "stream") return "水邊濕地 / 河川湖泊";
+  if (tag === "lowland") return "草地 / 農田 / 開闊地";
+  return "山林 / 林緣步道";
+}
 
 function inferHabitat(name: string) {
   if (waterBirds.has(name)) return "水邊濕地 / 河川湖泊";
@@ -320,18 +326,26 @@ function inferTone(name: string) {
 }
 
 export const taiwanCommonGuideBirds: TaiwanCommonGuideBird[] = taiwanCommonGuideBirdNames.map(
-  (chineseName, index) => ({
-    id: index + 1,
-    chineseName,
-    englishName: "英文名待補",
-    scientificName: "學名待補",
-    habitat: inferHabitat(chineseName),
-    size: inferSize(chineseName),
-    colors: inferColors(chineseName),
-    season: inferSeason(chineseName),
-    isTaiwanEndemic: taiwanEndemicSpecies.has(chineseName),
-    group: inferGroup(chineseName),
-    intro: inferIntro(chineseName),
-    imageTone: inferTone(chineseName),
-  })
+  (chineseName, index) => {
+    const endemicInfo = taiwanEndemicByName.get(chineseName);
+    const habitatCategory = endemicInfo
+      ? getHabitatCategoryFromEndemicTag(endemicInfo.habitatTag)
+      : inferHabitat(chineseName);
+
+    return {
+      id: index + 1,
+      chineseName,
+      englishName: endemicInfo?.englishName ?? "英文名待補",
+      scientificName: endemicInfo?.scientificName ?? "學名待補",
+      habitat: endemicInfo?.habitat ?? inferHabitat(chineseName),
+      habitatCategory,
+      size: endemicInfo?.size ?? inferSize(chineseName),
+      colors: endemicInfo?.colors ?? inferColors(chineseName),
+      season: inferSeason(chineseName),
+      isTaiwanEndemic: taiwanEndemicSpecies.has(chineseName),
+      group: endemicInfo ? "台灣特有種" : inferGroup(chineseName),
+      intro: endemicInfo?.intro ?? inferIntro(chineseName),
+      imageTone: endemicInfo?.imageTone ?? inferTone(chineseName),
+    };
+  }
 );

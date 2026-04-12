@@ -791,8 +791,8 @@ const birdImageOverrides: Record<string, BirdImageOverride> = {
   ),
   琵嘴鴨: createBirdImage(
     "琵嘴鴨",
-    "https://upload.wikimedia.org/wikipedia/commons/c/c0/Duck_Banding%2C_Northern_Shoveler_%2816150478975%29.jpg",
-    "https://commons.wikimedia.org/wiki/File:Duck_Banding,_Northern_Shoveler_(16150478975).jpg"
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Anas%20clypeata%202.jpg",
+    "https://commons.wikimedia.org/wiki/File:Anas_clypeata_2.jpg"
   ),
   赤頸鴨: createBirdImage(
     "赤頸鴨",

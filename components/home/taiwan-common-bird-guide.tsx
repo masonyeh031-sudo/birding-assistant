@@ -49,6 +49,12 @@ const birdCardByName = new Map(birdCards.map((bird) => [bird.name, bird]));
 const verifiedPhotoAliasByName: Record<string, string> = {
   斯氏繡眼: "綠繡眼",
   灰樹鵲: "樹鵲",
+  黑長尾雉: "帝雉",
+  臺灣竹雞: "台灣竹雞",
+  臺灣藍鵲: "台灣藍鵲",
+  臺灣紫嘯鶇: "台灣紫嘯鶇",
+  臺灣朱雀: "台灣朱雀",
+  灰鷽: "台灣灰鷽",
 };
 
 const directVerifiedImages: Record<string, VerifiedGuideImage> = {
@@ -442,7 +448,7 @@ export function TaiwanCommonBirdGuide() {
           : guideFilter === "endemic"
             ? bird.isTaiwanEndemic
             : bird.season === (guideFilter === "winter" ? "冬候鳥" : "夏候鳥");
-      const matchesHabitat = habitatFilter === "all" ? true : bird.habitat === habitatFilter;
+      const matchesHabitat = habitatFilter === "all" ? true : bird.habitatCategory === habitatFilter;
       const matchesSize = sizeFilter === "all" ? true : bird.size === sizeFilter;
 
       return matchesQuery && matchesGuideFilter && matchesHabitat && matchesSize;
