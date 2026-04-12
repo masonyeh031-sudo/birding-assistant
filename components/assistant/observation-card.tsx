@@ -36,7 +36,8 @@ export function ObservationCard({
   const [editableText, setEditableText] = useState("");
   const [copied, setCopied] = useState(false);
   const recordDate = new Date().toLocaleDateString("zh-TW");
-  const sizeSummary = form.size ? getBirdSizeLabel(form.size) : "未填";
+  const finalSize = form.finalSelectedSize || form.userSelectedSize || form.size;
+  const sizeSummary = finalSize ? getBirdSizeLabel(finalSize) : "未填";
   const colorSummary =
     form.colorTraits.length > 0
       ? form.colorTraits.map((item) => colorLabels[item] ?? item).join("、")

@@ -79,9 +79,15 @@ function getColorInfluenceSummary(form: BirdObservationFormState) {
   return `有被使用者修正。AI 原本建議 ${autoColors}，最後確認為 ${finalColors}；排序會以使用者最終顏色為準，並重新檢查是否和大小、環境與照片輪廓一致。`;
 }
 
+function getFinalSelectedSize(form: BirdObservationFormState) {
+  return form.finalSelectedSize || form.userSelectedSize || form.size;
+}
+
 function getDecisiveFactor(form: BirdObservationFormState) {
-  if (form.size) {
-    return `最影響排序的是照片輪廓、類群判斷、鳥類大小「${labelForSize(form.size)}」與環境「${labelForEnvironment(getSelectedEnvironment(form))}」；嘴型、腿長與最終色塊再用來縮小候選。`;
+  const finalSize = getFinalSelectedSize(form);
+
+  if (finalSize) {
+    return `最影響排序的是照片輪廓、類群判斷、鳥類大小「${labelForSize(finalSize)}」與環境「${labelForEnvironment(getSelectedEnvironment(form))}」；嘴型、腿長與最終色塊再用來縮小候選。`;
   }
 
   return `最影響排序的是照片輪廓、類群判斷與環境「${labelForEnvironment(getSelectedEnvironment(form))}」；因為尚未選擇鳥類大小，嘴型、腿長與顏色會再作為後段輔助。`;
@@ -376,14 +382,15 @@ function scoreProfile(profile: BirdProfile, form: BirdObservationFormState) {
   let score = 0;
   const reasoning: string[] = [];
   const candidateSize = getBirdSizeBucket(profile.topMatch.chineseName);
+  const finalSize = getFinalSelectedSize(form);
 
-  if (form.size) {
-    const sizeScore = getBirdSizeScore(form.size, candidateSize);
+  if (finalSize) {
+    const sizeScore = getBirdSizeScore(finalSize, candidateSize);
     score += sizeScore;
     if (sizeScore > 0) {
-      reasoning.push(`體型比例接近你選的「${labelForSize(form.size)}」。`);
+      reasoning.push(`體型比例接近你最後確認的「${labelForSize(finalSize)}」。`);
     } else if (sizeScore < 0) {
-      reasoning.push(`和你選的「${labelForSize(form.size)}」在體型上有明顯落差。`);
+      reasoning.push(`和你最後確認的「${labelForSize(finalSize)}」在體型上有明顯落差。`);
     }
   }
 
@@ -428,6 +435,7 @@ function buildGenericResultFromCard(name: string, confidence: string, reasoning:
 }
 
 function buildLocalResponse(form: BirdObservationFormState): BirdAnalysisResponse {
+  const finalSize = getFinalSelectedSize(form);
   const ranked = birdProfiles
     .map((profile) => scoreProfile(profile, form))
     .sort((a, b) => b.score - a.score);
@@ -476,7 +484,7 @@ function buildLocalResponse(form: BirdObservationFormState): BirdAnalysisRespons
       : "目前還沒有照片，所以這只是依大小、環境與色塊做的保守候選清單。",
     keyFeatures: top.visualTraits,
     environmentFit: `你選的是「${labelForEnvironment(getSelectedEnvironment(form))}」，這和 ${top.topMatch.chineseName} 的常見環境${mapEnvironmentToProfileKeys(getSelectedEnvironment(form)).some((item) => top.environments.includes(item)) ? "相當吻合，因此提高排名" : "不完全吻合，因此系統已把環境衝突納入降權"}。`,
-    sizeFit: buildSizeFit(top.topMatch.chineseName, form.size),
+    sizeFit: buildSizeFit(top.topMatch.chineseName, finalSize),
     colorFit:
       form.colorTraits.length > 0
         ? `你勾選了 ${form.colorTraits.map(labelForColor).join("、")}；這些色塊只作為輔助，仍以照片裡真正看得到的主色分布為主。`
@@ -491,6 +499,7 @@ function buildLocalResponse(form: BirdObservationFormState): BirdAnalysisRespons
 }
 
 function transformApiResult(apiResult: ApiBirdIdResponse, form: BirdObservationFormState): BirdAnalysisResponse {
+  const finalSize = getFinalSelectedSize(form);
   const candidates = (apiResult.candidates ?? []).slice(0, 3);
   const topCandidate = candidates[0];
   const limitedPhoto =
@@ -588,7 +597,7 @@ function transformApiResult(apiResult: ApiBirdIdResponse, form: BirdObservationF
       topProfile?.visualTraits ??
       [topCard?.clue ?? "建議先回頭觀察照片裡的主要外觀線索。"],
     environmentFit: `你選的是「${labelForEnvironment(getSelectedEnvironment(form))}」，系統會把環境當成實際篩選條件；若候選鳥種和這個環境明顯衝突，就會被降權或淘汰。`,
-    sizeFit: buildSizeFit(topCandidate.name, form.size),
+    sizeFit: buildSizeFit(topCandidate.name, finalSize),
     colorFit:
       form.colorTraits.length > 0
         ? `你勾選的色塊有 ${form.colorTraits.map(labelForColor).join("、")}；顏色會輔助縮小候選，但不會凌駕體型、輪廓與環境。`
@@ -617,6 +626,8 @@ function transformApiResult(apiResult: ApiBirdIdResponse, form: BirdObservationF
 }
 
 async function analyzeWithApi(form: BirdObservationFormState) {
+  const finalSize = getFinalSelectedSize(form);
+
   const response = await fetch("/api/bird-id", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -626,7 +637,12 @@ async function analyzeWithApi(form: BirdObservationFormState) {
       environmentKey: getSelectedEnvironment(form),
       selectedEnvironment: getSelectedEnvironment(form),
       environmentLabel: labelForEnvironment(getSelectedEnvironment(form)),
-      size: form.size || undefined,
+      size: finalSize || undefined,
+      autoDetectedSize: form.autoDetectedSize || undefined,
+      autoDetectedSizeConfidence: form.autoDetectedSizeConfidence || undefined,
+      autoDetectedSizeReason: form.autoDetectedSizeReason || undefined,
+      userSelectedSize: form.userSelectedSize || undefined,
+      finalSelectedSize: finalSize || undefined,
       traits: form.colorTraits,
       autoDetectedColors: form.autoDetectedColors,
       userAdjustedColors: form.userAdjustedColors,

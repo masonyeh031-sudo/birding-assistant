@@ -25,6 +25,11 @@ export type BirdObservationFormState = {
   environment: string;
   selectedEnvironment: string;
   size: BirdSizeSelection;
+  autoDetectedSize: BirdSizeSelection;
+  autoDetectedSizeConfidence: "高" | "中" | "低" | "";
+  autoDetectedSizeReason: string;
+  userSelectedSize: BirdSizeSelection;
+  finalSelectedSize: BirdSizeSelection;
   colorTraits: string[];
   autoDetectedColors: string[];
   userAdjustedColors: string[];

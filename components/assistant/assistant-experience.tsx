@@ -9,6 +9,7 @@ import { HeroSection } from "@/components/assistant/hero-section";
 import { ObservationCard } from "@/components/assistant/observation-card";
 import { analyzeBird } from "@/lib/analyze-bird";
 import { detectBirdBodyColors } from "@/lib/auto-color-detection";
+import { detectBirdSizeFromImage } from "@/lib/auto-size-detection";
 import { getBirdSizeLabel } from "@/lib/bird-size";
 import {
   birdSizeOptions,
@@ -87,7 +88,8 @@ export function AssistantExperience() {
 
   const selectedEnvironment = form.selectedEnvironment || form.environment;
   const environmentLabel = getEnvironmentLabel(selectedEnvironment);
-  const sizeLabel = getBirdSizeLabel(form.size);
+  const finalSize = form.finalSelectedSize || form.userSelectedSize || form.size;
+  const sizeLabel = getBirdSizeLabel(finalSize);
 
   function updateForm(updater: (current: BirdObservationFormState) => BirdObservationFormState) {
     setForm((current) => updater(current));
@@ -100,7 +102,12 @@ export function AssistantExperience() {
   }
 
   function handleSizeChange(value: BirdObservationFormState["size"]) {
-    updateForm((current) => ({ ...current, size: value }));
+    updateForm((current) => ({
+      ...current,
+      size: value,
+      userSelectedSize: value,
+      finalSelectedSize: value,
+    }));
   }
 
   function handleToggleColor(value: string) {
@@ -148,6 +155,12 @@ export function AssistantExperience() {
       colorDetectionStatus: "detecting",
       colorDetectionConfidence: "",
       colorDetectionReason: "正在分析照片中央偏前景區域，嘗試避開天空、樹葉與水面等背景顏色...",
+      autoDetectedSize: "",
+      autoDetectedSizeConfidence: "",
+      autoDetectedSizeReason: "正在根據照片中央鳥體輪廓、畫面佔比與外觀比例估計大小...",
+      userSelectedSize: "",
+      finalSelectedSize: "",
+      size: "",
     }));
     setCopied(false);
     setError(null);
@@ -185,6 +198,42 @@ export function AssistantExperience() {
             colorDetectionStatus: "failed",
             colorDetectionConfidence: "低",
             colorDetectionReason: "這張照片暫時無法自動偵測顏色，請直接手動選擇鳥體主色。",
+          };
+        });
+      });
+
+    void detectBirdSizeFromImage(file)
+      .then((detection) => {
+        setForm((current) => {
+          if (colorDetectionRunRef.current !== detectionRun || current.imagePreview !== previewUrl) {
+            return current;
+          }
+
+          return {
+            ...current,
+            autoDetectedSize: detection.size,
+            autoDetectedSizeConfidence: detection.confidence,
+            autoDetectedSizeReason: detection.reason,
+            userSelectedSize: detection.size,
+            finalSelectedSize: detection.size,
+            size: detection.size,
+          };
+        });
+      })
+      .catch(() => {
+        setForm((current) => {
+          if (colorDetectionRunRef.current !== detectionRun || current.imagePreview !== previewUrl) {
+            return current;
+          }
+
+          return {
+            ...current,
+            autoDetectedSize: "medium",
+            autoDetectedSizeConfidence: "低",
+            autoDetectedSizeReason: "照片暫時無法穩定估計大小，系統先保守預設為中型鳥；請依現場印象手動修正。",
+            userSelectedSize: "medium",
+            finalSelectedSize: "medium",
+            size: "medium",
           };
         });
       });
@@ -249,7 +298,7 @@ export function AssistantExperience() {
     const text = [
       `日期：${new Date().toLocaleDateString("zh-TW")}`,
       `環境：${environmentLabel || "未填"}`,
-      `大小：${form.size ? sizeLabel : "未填"}`,
+      `大小：${finalSize ? sizeLabel : "未填"}`,
       `顏色線索：${getColorSummary(form.colorTraits)}`,
       `推測鳥種：${result.combinedLikely ?? result.topMatch.chineseName}`,
       `英文名：${result.topMatch.englishName}`,
@@ -274,7 +323,7 @@ export function AssistantExperience() {
       "",
       `日期：${new Date().toLocaleDateString("zh-TW")}`,
       `環境：${environmentLabel || "未填"}`,
-      `大小：${form.size ? sizeLabel : "未填"}`,
+      `大小：${finalSize ? sizeLabel : "未填"}`,
       `顏色線索：${getColorSummary(form.colorTraits)}`,
       `推測鳥種：${result.combinedLikely ?? result.topMatch.chineseName}`,
       `英文名：${result.topMatch.englishName}`,

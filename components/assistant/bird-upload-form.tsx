@@ -2,7 +2,7 @@ import type { ChangeEvent } from "react";
 
 import { AutoColorDetector } from "@/components/assistant/auto-color-detector";
 import { BirdPhotoUploader } from "@/components/assistant/bird-photo-uploader";
-import { BirdSizeSelector } from "@/components/assistant/bird-size-selector";
+import { BirdSizeAutoSelector } from "@/components/assistant/bird-size-auto-selector";
 import { ColorChipSelector } from "@/components/assistant/color-chip-selector";
 import { EnvironmentSelector } from "@/components/assistant/environment-selector";
 import type {
@@ -92,9 +92,9 @@ export function BirdUploadForm({
           <div className="rounded-[30px] border border-moss-100 bg-white p-5">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h3 className="text-xl font-bold text-pine">鳥的大小？</h3>
+                <h3 className="text-xl font-bold text-pine">鳥類大小自動預設器</h3>
                 <p className="mt-2 text-sm leading-7 text-moss-600">
-                  大小是很重要的第一層篩選。先想像牠大概接近麻雀、白頭翁、斑鳩、喜鵲，還是鷲鷺這種體格，再讓系統重新排序。
+                  上傳照片後會先自動估計鳥體大小並預設選項；你可以直接改選，最後辨識一律採用你確認後的大小。
                 </p>
               </div>
               <span className="rounded-full border border-moss-200 bg-moss-50 px-4 py-2 text-xs font-semibold text-moss-600">
@@ -103,7 +103,7 @@ export function BirdUploadForm({
             </div>
 
             <div className="mt-5">
-              <BirdSizeSelector value={form.size} options={sizeOptions} onChange={onSizeChange} />
+              <BirdSizeAutoSelector form={form} options={sizeOptions} onChange={onSizeChange} />
             </div>
           </div>
 

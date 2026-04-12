@@ -111,10 +111,12 @@ export function BirdSizeSelector({
   value,
   options,
   onChange,
+  aiSuggestedSize,
 }: {
   value: BirdSizeSelection;
   options: BirdSizeOption[];
   onChange: (value: BirdSizeSelection) => void;
+  aiSuggestedSize?: BirdSizeSelection;
 }) {
   const selected = options.find((option) => option.value === value);
 
@@ -125,6 +127,7 @@ export function BirdSizeSelector({
         <div className="relative grid grid-cols-2 gap-3 sm:grid-cols-5">
           {options.map((option) => {
             const active = option.value === value;
+            const aiSuggested = option.value === aiSuggestedSize;
 
             return (
               <button
@@ -135,10 +138,15 @@ export function BirdSizeSelector({
                 onClick={() => onChange(option.value)}
                 className={
                   active
-                    ? "group flex min-h-44 flex-col items-center justify-end gap-3 rounded-[24px] border border-moss-300 bg-white px-2 pb-3 pt-2 shadow-card"
-                    : "group flex min-h-44 flex-col items-center justify-end gap-3 rounded-[24px] border border-transparent px-2 pb-3 pt-2 transition hover:border-moss-100 hover:bg-white/70"
+                    ? "group relative flex min-h-44 flex-col items-center justify-end gap-3 rounded-[24px] border border-moss-300 bg-white px-2 pb-3 pt-2 shadow-card"
+                    : "group relative flex min-h-44 flex-col items-center justify-end gap-3 rounded-[24px] border border-transparent px-2 pb-3 pt-2 transition hover:border-moss-100 hover:bg-white/70"
                 }
               >
+                {aiSuggested ? (
+                  <span className="absolute right-2 top-2 rounded-full bg-sky/80 px-2.5 py-1 text-[10px] font-black text-pine ring-1 ring-white/80">
+                    AI 建議
+                  </span>
+                ) : null}
                 <BirdSilhouette kind={option.value} scale={option.silhouetteScale} active={active} />
                 <SelectionDot active={active} />
                 <span className={active ? "text-xs font-black text-pine" : "text-xs font-bold text-moss-600"}>

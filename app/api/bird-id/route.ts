@@ -16,6 +16,11 @@ type BirdIdRequest = {
   environmentLabel?: string;
   observationSpot?: string;
   size?: string;
+  autoDetectedSize?: string;
+  autoDetectedSizeConfidence?: string;
+  autoDetectedSizeReason?: string;
+  userSelectedSize?: string;
+  finalSelectedSize?: string;
   photoFocus?: string;
   traits?: string[];
   autoDetectedColors?: string[];
@@ -961,7 +966,10 @@ Step 5｜先在內部思考 Top 5 候選，再輸出 Top 3
 - 地點補充：${body.location ?? "未提供"}
 - 日期：未提供
 - 停留位置 / 姿態：${body.observationSpot ?? "未知"}
-- 體型線索：${body.size ? `${getBirdSizeLabel(body.size)}（${body.size}）` : "未知"}
+- AI 自動預設大小：${body.autoDetectedSize ? `${getBirdSizeLabel(body.autoDetectedSize)}（${body.autoDetectedSize}，信心：${body.autoDetectedSizeConfidence ?? "未知"}）` : "未知"}
+- AI 大小預設原因：${body.autoDetectedSizeReason ?? "未提供"}
+- 使用者目前選擇大小：${body.userSelectedSize ? `${getBirdSizeLabel(body.userSelectedSize)}（${body.userSelectedSize}）` : "未知"}
+- 最終用於辨識大小：${body.finalSelectedSize || body.size ? `${getBirdSizeLabel(body.finalSelectedSize ?? body.size)}（${body.finalSelectedSize ?? body.size}）` : "未知"}
 - AI 自動預設顏色：${colorListLabel(body.autoDetectedColors)}
 - AI 預設顏色原因：${body.colorDetectionReason ?? "未提供"}
 - AI 顏色信心：${body.colorDetectionConfidence ?? "未知"}
@@ -972,6 +980,7 @@ Step 5｜先在內部思考 Top 5 候選，再輸出 Top 3
 【本工具這次必須特別遵守的重點】
 - 你的任務是根據鳥類照片，再結合使用者後續選擇的環境、鳥的大小、顏色區塊，找出最符合照片中的鳥類。
 - 照片是主要依據，但環境、大小、顏色是重要篩選條件，不可忽略。
+- AI 自動預設大小只是建議；如果使用者手動改選大小，最後必須以「最終用於辨識大小」為準。
 - 環境篩選不可只是參考文字，而必須真的影響排序；與環境高度吻合的候選要提高排名，與環境明顯衝突的候選要降低排名或淘汰。
 - 辨識鳥種時，請以照片中的體型輪廓、整體比例、嘴型、腿長為主，再結合鳥類大小、環境與使用者最終確認的顏色區塊重新排序候選。
 - 不可只看顏色猜鳥，也不可只看照片初步印象就固定答案。
