@@ -54,6 +54,12 @@ button {
   font: inherit;
 }
 
+input,
+select,
+textarea {
+  font: inherit;
+}
+
 img,
 svg,
 video,
@@ -94,6 +100,13 @@ canvas {
   background: rgba(234, 241, 226, 0.96);
 }
 
+.surface-card {
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 24px 70px rgba(67, 90, 59, 0.08);
+  backdrop-filter: blur(18px);
+}
+
 .section-title {
   font-family:
     "Zen Maru Gothic",
@@ -115,4 +128,11 @@ canvas {
   color: var(--text-soft);
   font-size: 1rem;
   line-height: 1.8;
+}
+
+.clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }

@@ -41,10 +41,17 @@ export function BirdUploadForm({
   onReset: () => void;
   onLoadSample: () => void;
 }) {
+  const selectedEnvironment = environments.find(
+    (item) => item.value === (form.selectedEnvironment || form.environment)
+  );
+  const selectedSize = sizeOptions.find(
+    (item) => item.value === (form.finalSelectedSize || form.userSelectedSize || form.size)
+  );
+
   return (
     <section
       id="assistant-form"
-      className="mt-10 rounded-[36px] border border-moss-100 bg-white/92 p-5 shadow-card sm:p-7"
+      className="surface-card mt-10 rounded-[36px] p-5 sm:p-7"
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
@@ -58,6 +65,33 @@ export function BirdUploadForm({
         </div>
         <div className="rounded-[24px] border border-moss-100 bg-moss-50/80 px-4 py-3 text-sm font-semibold leading-7 text-moss-700">
           辨識順序：照片為主 → 大小為先 → 環境為輔 → 顏色色塊為輔
+        </div>
+      </div>
+
+      <div className="mt-6 grid gap-3 md:grid-cols-4">
+        <div className="rounded-[24px] border border-moss-100 bg-white px-4 py-4">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-moss-500">照片狀態</p>
+          <p className="mt-2 text-base font-black text-pine">{form.imagePreview ? "已加入照片" : "等待上傳"}</p>
+          <p className="mt-1 text-sm text-moss-600">{form.imageName || "先給系統一張主體清楚的鳥照。"}</p>
+        </div>
+        <div className="rounded-[24px] border border-moss-100 bg-white px-4 py-4">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-moss-500">大小條件</p>
+          <p className="mt-2 text-base font-black text-pine">{selectedSize?.label ?? "尚未決定"}</p>
+          <p className="mt-1 text-sm text-moss-600">{selectedSize?.example ?? "上傳後會先有 AI 建議。"}</p>
+        </div>
+        <div className="rounded-[24px] border border-moss-100 bg-white px-4 py-4">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-moss-500">環境條件</p>
+          <p className="mt-2 text-base font-black text-pine">{selectedEnvironment?.label ?? "尚未選擇"}</p>
+          <p className="mt-1 text-sm text-moss-600">
+            {selectedEnvironment?.description ?? "環境不只是參考，會實際影響候選排序。"}
+          </p>
+        </div>
+        <div className="rounded-[24px] border border-moss-100 bg-white px-4 py-4">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-moss-500">色塊確認</p>
+          <p className="mt-2 text-base font-black text-pine">
+            {form.colorTraits.length > 0 ? `${form.colorTraits.length} 個色塊` : "尚未確認"}
+          </p>
+          <p className="mt-1 text-sm text-moss-600">最後送出的辨識會以你確認後的顏色為準。</p>
         </div>
       </div>
 
@@ -132,7 +166,7 @@ export function BirdUploadForm({
             </div>
           </div>
 
-          <div className="rounded-[34px] border border-moss-100 bg-pine px-5 py-6 text-white shadow-card sm:px-6">
+          <div className="rounded-[34px] border border-moss-100 bg-[linear-gradient(135deg,#264333_0%,#355744_58%,#4b715d_100%)] px-5 py-6 text-white shadow-card sm:px-6">
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-white/70">開始分析</p>
             <p className="mt-2 text-lg font-bold">確認顏色後，讓系統重新排序候選鳥種</p>
             <p className="mt-2 text-sm leading-7 text-white/80">

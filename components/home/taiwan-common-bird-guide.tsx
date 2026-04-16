@@ -46,6 +46,10 @@ const sizeFilters = [
 type SizeFilter = (typeof sizeFilters)[number]["key"];
 
 const birdCardByName = new Map(birdCards.map((bird) => [bird.name, bird]));
+const endemicBirdCount = taiwanCommonGuideBirds.filter((bird) => bird.isTaiwanEndemic).length;
+const winterBirdCount = taiwanCommonGuideBirds.filter((bird) => bird.season === "冬候鳥").length;
+const summerBirdCount = taiwanCommonGuideBirds.filter((bird) => bird.season === "夏候鳥").length;
+
 const verifiedPhotoAliasByName: Record<string, string> = {
   斯氏繡眼: "綠繡眼",
   灰樹鵲: "樹鵲",
@@ -492,27 +496,30 @@ function GuideCard({ bird, onOpen }: { bird: GuideBird; onOpen: (bird: GuideBird
           </div>
         </div>
 
-        <div className="mt-4 space-y-3 text-sm leading-6 text-moss-700">
-          <p>
-            <span className="font-semibold text-pine">英文名：</span>
-            {bird.englishName}
-          </p>
-          <p>
-            <span className="font-semibold text-pine">學名：</span>
-            <span className="italic">{bird.scientificName}</span>
-          </p>
-          <p>
-            <span className="font-semibold text-pine">常見環境：</span>
-            {bird.habitat}
-          </p>
-          <p>
-            <span className="font-semibold text-pine">季節狀態：</span>
-            {bird.season}
-          </p>
-          <p>
-            <span className="font-semibold text-pine">介紹：</span>
-            {bird.intro}
-          </p>
+        <div className="mt-4 space-y-4 text-sm leading-6 text-moss-700">
+          <div>
+            <p className="text-sm font-bold text-pine">{bird.englishName}</p>
+            <p className="mt-1 text-sm italic text-moss-500">{bird.scientificName}</p>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <span className="rounded-full bg-moss-50 px-3 py-1 text-xs font-bold text-moss-700">
+              {bird.season}
+            </span>
+            <span className="rounded-full bg-sky/70 px-3 py-1 text-xs font-bold text-pine">
+              {bird.habitatCategory}
+            </span>
+          </div>
+
+          <div className="rounded-[22px] bg-moss-50/78 px-4 py-3">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-moss-500">常見環境</p>
+            <p className="mt-2 text-sm font-semibold leading-7 text-pine">{bird.habitat}</p>
+          </div>
+
+          <div className="rounded-[22px] bg-white px-4 py-3 ring-1 ring-moss-100">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-moss-500">鳥種介紹</p>
+            <p className="mt-2 clamp-3 text-sm leading-7 text-moss-700">{bird.intro}</p>
+          </div>
         </div>
 
         <button
@@ -563,7 +570,7 @@ export function TaiwanCommonBirdGuide() {
 
   return (
     <>
-      <div className="rounded-[34px] border border-white/80 bg-white/84 p-4 shadow-card backdrop-blur sm:p-6">
+      <div className="surface-card rounded-[34px] p-4 sm:p-6">
         <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
           <label className="block">
             <span className="text-sm font-semibold text-moss-700">搜尋中文鳥名</span>
@@ -575,12 +582,39 @@ export function TaiwanCommonBirdGuide() {
             />
           </label>
 
-          <div className="rounded-[24px] bg-moss-50 px-4 py-3 text-sm font-semibold text-moss-700">
-            預設完整顯示 {taiwanCommonGuideBirds.length} 張卡片
-            <div className="mt-1 text-xs font-medium text-moss-500">
-              目前畫面顯示 {filteredBirds.length} 張，沒有分頁與截斷
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-[24px] bg-moss-50 px-4 py-3 text-sm font-semibold text-moss-700">
+              完整圖鑑
+              <div className="mt-1 text-2xl font-black text-pine">{taiwanCommonGuideBirds.length}</div>
+              <div className="mt-1 text-xs font-medium text-moss-500">預設完整顯示，不分頁</div>
+            </div>
+            <div className="rounded-[24px] bg-white px-4 py-3 text-sm font-semibold text-moss-700 ring-1 ring-moss-100">
+              台灣特有種
+              <div className="mt-1 text-2xl font-black text-pine">{endemicBirdCount}</div>
+              <div className="mt-1 text-xs font-medium text-moss-500">可一鍵切換查看</div>
+            </div>
+            <div className="rounded-[24px] bg-white px-4 py-3 text-sm font-semibold text-moss-700 ring-1 ring-moss-100">
+              目前顯示
+              <div className="mt-1 text-2xl font-black text-pine">{filteredBirds.length}</div>
+              <div className="mt-1 text-xs font-medium text-moss-500">搜尋與篩選結果</div>
             </div>
           </div>
+        </div>
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          {[
+            `冬候鳥 ${winterBirdCount} 種`,
+            `夏候鳥 ${summerBirdCount} 種`,
+            "支援棲地篩選",
+            "支援體型篩選",
+          ].map((item) => (
+            <span
+              key={item}
+              className="rounded-full border border-moss-100 bg-white/90 px-4 py-2 text-xs font-bold text-moss-600"
+            >
+              {item}
+            </span>
+          ))}
         </div>
 
         <div className="mt-5">
@@ -670,12 +704,37 @@ export function TaiwanCommonBirdGuide() {
         </div>
 
         {hasActiveFilter ? (
+          <div className="mt-5 flex flex-wrap gap-2">
+            {query ? (
+              <span className="rounded-full bg-moss-50 px-4 py-2 text-xs font-bold text-moss-700">
+                搜尋：{query}
+              </span>
+            ) : null}
+            {guideFilter !== "all" ? (
+              <span className="rounded-full bg-moss-50 px-4 py-2 text-xs font-bold text-moss-700">
+                分類：{guideFilters.find((item) => item.key === guideFilter)?.label}
+              </span>
+            ) : null}
+            {habitatFilter !== "all" ? (
+              <span className="rounded-full bg-moss-50 px-4 py-2 text-xs font-bold text-moss-700">
+                棲地：{habitatFilters.find((item) => item.key === habitatFilter)?.label}
+              </span>
+            ) : null}
+            {sizeFilter !== "all" ? (
+              <span className="rounded-full bg-moss-50 px-4 py-2 text-xs font-bold text-moss-700">
+                體型：{sizeFilters.find((item) => item.key === sizeFilter)?.label}
+              </span>
+            ) : null}
+          </div>
+        ) : null}
+
+        {hasActiveFilter ? (
           <button
             type="button"
             onClick={clearFilters}
             className="mt-5 rounded-full border border-moss-200 bg-white px-4 py-2 text-sm font-semibold text-moss-700 transition hover:border-moss-400"
           >
-            清除搜尋與篩選，回到 100 張完整卡片
+            清除搜尋與篩選，回到 {taiwanCommonGuideBirds.length} 張完整卡片
           </button>
         ) : null}
       </div>
