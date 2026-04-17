@@ -28,7 +28,7 @@ const footerColumns = [
 export function SiteFooter() {
   return (
     <footer className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
-      <div className="rounded-[32px] border border-moss-200 bg-pine px-6 py-8 text-white shadow-card sm:px-8 sm:py-10">
+      <div className="rounded-[32px] border border-moss-200 bg-[linear-gradient(135deg,#274642_0%,#355652_52%,#698481_100%)] px-6 py-8 text-white shadow-card sm:px-8 sm:py-10">
         <div className="max-w-2xl">
           <h2 className="font-serif text-3xl leading-tight text-white">把第一次賞鳥，變成一件輕鬆開始的事</h2>
           <p className="mt-4 text-sm leading-7 text-moss-100 sm:text-base">

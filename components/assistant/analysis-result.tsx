@@ -331,7 +331,7 @@ export function AnalysisResult({
             </div>
 
             <div className="space-y-4">
-              <div className="rounded-[28px] border border-moss-100 bg-[linear-gradient(135deg,rgba(241,247,237,0.92),rgba(255,255,255,0.96))] p-5 shadow-sm">
+              <div className="rounded-[28px] border border-moss-100 bg-[linear-gradient(135deg,rgba(245,241,233,0.95),rgba(255,255,255,0.98)_56%,rgba(219,232,236,0.52))] p-5 shadow-sm">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">結果總覽</p>
                 <div className="mt-4 grid gap-3">
                   {[

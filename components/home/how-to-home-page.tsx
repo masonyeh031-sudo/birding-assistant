@@ -119,7 +119,7 @@ export function HowToHomePage() {
             {starterSteps.map((item) => (
               <div
                 key={item.step}
-                className="rounded-[28px] border border-moss-100 bg-[linear-gradient(135deg,rgba(241,247,237,0.92),rgba(255,255,255,0.96))] p-5 shadow-sm"
+                className="rounded-[28px] border border-moss-100 bg-[linear-gradient(135deg,rgba(245,241,233,0.96),rgba(255,255,255,0.98)_54%,rgba(219,232,236,0.55))] p-5 shadow-sm"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -197,7 +197,7 @@ export function HowToHomePage() {
             {scenarios.map((scenario) => (
               <article
                 key={scenario.title}
-                className="rounded-[28px] border border-moss-100 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(241,247,237,0.88))] p-5 shadow-sm"
+                className="rounded-[28px] border border-moss-100 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(245,241,233,0.9))] p-5 shadow-sm"
               >
                 <h3 className="text-xl font-black leading-9 text-pine">{scenario.title}</h3>
                 <div className="mt-4 rounded-[22px] bg-pine px-4 py-4 text-white">

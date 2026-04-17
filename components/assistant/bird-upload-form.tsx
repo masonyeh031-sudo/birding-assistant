@@ -194,7 +194,7 @@ export function BirdUploadForm({
             </div>
           </div>
 
-          <div className="rounded-[34px] border border-moss-100 bg-[linear-gradient(135deg,#264333_0%,#355744_58%,#4b715d_100%)] px-5 py-6 text-white shadow-card sm:px-6">
+          <div className="rounded-[34px] border border-moss-100 bg-[linear-gradient(135deg,#2a4a46_0%,#41625f_54%,#6e8b88_100%)] px-5 py-6 text-white shadow-card sm:px-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.24em] text-white/70">開始分析</p>

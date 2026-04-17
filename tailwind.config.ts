@@ -10,23 +10,23 @@ const config: Config = {
     extend: {
       colors: {
         moss: {
-          50: "#f5f8f2",
-          100: "#eaf1e2",
-          200: "#d1dfbf",
-          300: "#b0c792",
-          400: "#8dac68",
-          500: "#6f8d4c",
-          600: "#56703a",
-          700: "#42572f",
-          800: "#374729",
-          900: "#2f3c24",
+          50: "#f7f5ef",
+          100: "#ece7dc",
+          200: "#d9cfbf",
+          300: "#bfb19a",
+          400: "#a18f76",
+          500: "#83715d",
+          600: "#6a5b4b",
+          700: "#56493c",
+          800: "#44392f",
+          900: "#342b24",
         },
-        sand: "#f6f0e3",
-        sky: "#dcecf2",
-        pine: "#1f372b",
+        sand: "#f4ede2",
+        sky: "#dbe8ec",
+        pine: "#2a4a46",
       },
       boxShadow: {
-        card: "0 16px 40px rgba(55, 71, 41, 0.10)",
+        card: "0 18px 44px rgba(63, 57, 49, 0.10)",
       },
       fontFamily: {
         sans: [
@@ -52,7 +52,7 @@ const config: Config = {
       },
       backgroundImage: {
         "hero-glow":
-          "radial-gradient(circle at top, rgba(220,236,242,0.95), rgba(245,248,242,0.3) 42%, transparent 70%)",
+          "radial-gradient(circle at top, rgba(219,232,236,0.95), rgba(247,245,239,0.35) 42%, transparent 70%)",
       },
     },
   },
