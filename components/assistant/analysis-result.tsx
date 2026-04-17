@@ -42,6 +42,12 @@ function confidenceWidth(confidence: string) {
   return "w-[42%]";
 }
 
+function confidenceTone(confidence: string) {
+  if (confidence.includes("高")) return "bg-emerald-100 text-emerald-900";
+  if (confidence.includes("中")) return "bg-amber-100 text-amber-900";
+  return "bg-rose-100 text-rose-900";
+}
+
 export function AnalysisResult({
   result,
   loading,
@@ -57,6 +63,7 @@ export function AnalysisResult({
   const limitedPhoto = result?.photoQuality === "limited" || Boolean(result?.needsMorePhotos);
   const uncertain =
     result?.topMatch.confidence === "低" || Boolean(result?.isCloseCall) || limitedPhoto;
+  const comparisonCandidates = result ? [result.topMatch, ...result.alternatives].slice(0, 2) : [];
 
   return (
     <section id="analysis-result" className="mt-10">
@@ -235,8 +242,6 @@ export function AnalysisResult({
             </div>
           ) : null}
 
-          {observationCard}
-
           <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
             <div className="rounded-[32px] border border-moss-100 bg-moss-50/65 p-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
@@ -267,6 +272,31 @@ export function AnalysisResult({
                   <p className="mt-2 text-base font-bold text-pine">{result.likelyGroup}</p>
                 </div>
               ) : null}
+
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                {[
+                  {
+                    label: "最可能答案",
+                    value: result.combinedLikely ?? result.topMatch.chineseName,
+                    tone: "bg-white text-pine",
+                  },
+                  {
+                    label: "照片品質",
+                    value: limitedPhoto ? "需補拍" : "可判讀",
+                    tone: limitedPhoto ? "bg-orange-50 text-orange-900" : "bg-emerald-50 text-emerald-900",
+                  },
+                  {
+                    label: "決定性條件",
+                    value: result.decisiveFactor ?? "照片輪廓與環境",
+                    tone: "bg-sky/60 text-pine",
+                  },
+                ].map((item) => (
+                  <div key={item.label} className={`rounded-[24px] px-4 py-4 shadow-sm ${item.tone}`}>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] opacity-70">{item.label}</p>
+                    <p className="mt-2 text-base font-black leading-7">{item.value}</p>
+                  </div>
+                ))}
+              </div>
 
               {topProfile ? (
                 <div className="mt-5 overflow-hidden rounded-[28px] bg-white">
@@ -301,6 +331,23 @@ export function AnalysisResult({
             </div>
 
             <div className="space-y-4">
+              <div className="rounded-[28px] border border-moss-100 bg-[linear-gradient(135deg,rgba(241,247,237,0.92),rgba(255,255,255,0.96))] p-5 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">結果總覽</p>
+                <div className="mt-4 grid gap-3">
+                  {[
+                    { label: "最可能類群", value: result.likelyGroup ?? "待交叉比對" },
+                    { label: "與環境吻合度", value: result.environmentFit ?? "尚未補充說明" },
+                    { label: "與大小吻合度", value: result.sizeFit ?? "尚未補充說明" },
+                    { label: "與顏色吻合度", value: result.colorFit ?? "尚未補充說明" },
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-[22px] bg-white/92 px-4 py-3">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">{item.label}</p>
+                      <p className="mt-2 text-sm leading-7 text-moss-700">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className="rounded-[28px] border border-moss-100 bg-white p-5 shadow-sm">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">判斷依據</p>
                 <ul className="mt-3 space-y-2 text-sm leading-7 text-moss-700">
@@ -334,33 +381,100 @@ export function AnalysisResult({
             </div>
           </div>
 
+          {observationCard}
+
           <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
-            <div className="rounded-[28px] border border-moss-100 bg-white p-5 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">其他可能鳥種</p>
-              <div className="mt-4 space-y-3">
-                {result.alternatives.map((item, index) => (
-                  <div key={item.chineseName} className="rounded-[22px] bg-moss-50/70 p-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">
-                          候選 {index + 2}
-                        </p>
-                        <p className="text-lg font-bold text-pine">{item.chineseName}</p>
-                        <p className="text-sm text-moss-600">
-                          {item.englishName} · {item.scientificName}
-                        </p>
-                      </div>
-                      <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-moss-700">
-                        {item.confidence}
-                      </span>
+            <div className="space-y-4">
+              {comparisonCandidates.length > 1 ? (
+                <div className="rounded-[28px] border border-moss-100 bg-white p-5 shadow-sm">
+                  <div className="flex flex-wrap items-end justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">前兩名差異比較</p>
+                      <h3 className="mt-2 text-2xl font-black text-pine">第一名與第二名的判斷重點</h3>
                     </div>
-                    <ul className="mt-3 space-y-2 text-sm leading-7 text-moss-700">
-                      {item.reasoning.map((reason) => (
-                        <li key={reason}>• {reason}</li>
-                      ))}
-                    </ul>
+                    <span className="rounded-full bg-moss-50 px-3 py-1 text-xs font-bold text-moss-700">
+                      {result.isCloseCall ? "分數接近" : "已有明顯排序"}
+                    </span>
                   </div>
-                ))}
+
+                  <div className="mt-5 grid gap-4 md:grid-cols-2">
+                    {comparisonCandidates.map((item, index) => {
+                      const image = findBirdImage(item.chineseName);
+
+                      return (
+                        <article
+                          key={`${item.chineseName}-compare`}
+                          className="overflow-hidden rounded-[24px] border border-moss-100 bg-moss-50/65"
+                        >
+                          <div className="aspect-[4/3] overflow-hidden bg-white">
+                            {image ? (
+                              <img
+                                src={image.src}
+                                alt={image.alt}
+                                className="h-full w-full object-cover"
+                                loading="lazy"
+                              />
+                            ) : (
+                              <div className="flex h-full items-center justify-center px-4 text-sm font-semibold text-moss-600">
+                                目前沒有對應照片
+                              </div>
+                            )}
+                          </div>
+                          <div className="space-y-3 p-4">
+                            <div className="flex items-start justify-between gap-3">
+                              <div>
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">
+                                  候選 {index + 1}
+                                </p>
+                                <p className="mt-1 text-xl font-black text-pine">{item.chineseName}</p>
+                                <p className="text-sm text-moss-600">{item.englishName}</p>
+                              </div>
+                              <span className={`rounded-full px-3 py-1 text-xs font-bold ${confidenceTone(item.confidence)}`}>
+                                {item.confidence}
+                              </span>
+                            </div>
+                            <div className="space-y-2">
+                              {item.reasoning.slice(0, 2).map((reason) => (
+                                <p key={reason} className="rounded-2xl bg-white px-3 py-2 text-sm leading-6 text-moss-700">
+                                  {reason}
+                                </p>
+                              ))}
+                            </div>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="rounded-[28px] border border-moss-100 bg-white p-5 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">其他可能鳥種</p>
+                <div className="mt-4 space-y-3">
+                  {result.alternatives.map((item, index) => (
+                    <div key={item.chineseName} className="rounded-[22px] bg-moss-50/70 p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">
+                            候選 {index + 2}
+                          </p>
+                          <p className="text-lg font-bold text-pine">{item.chineseName}</p>
+                          <p className="text-sm text-moss-600">
+                            {item.englishName} · {item.scientificName}
+                          </p>
+                        </div>
+                        <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-moss-700">
+                          {item.confidence}
+                        </span>
+                      </div>
+                      <ul className="mt-3 space-y-2 text-sm leading-7 text-moss-700">
+                        {item.reasoning.map((reason) => (
+                          <li key={reason}>• {reason}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 

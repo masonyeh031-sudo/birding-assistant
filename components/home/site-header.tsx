@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
+  { label: "首頁", href: "/", hint: "使用教學" },
   { label: "賞鳥助手", href: "/assistant", hint: "照片辨識" },
   { label: "台灣常見鳥類圖鑑", href: "/birds", hint: "完整卡片牆" },
   { label: "台北捷運賞鳥推薦", href: "/mrt-spots", hint: "路線整理" },
@@ -19,7 +20,7 @@ export function SiteHeader() {
       <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6 lg:px-8">
         <div className="surface-card rounded-[30px] px-4 py-4 sm:px-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <Link href="/assistant" className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3">
               <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-moss-100">
                 <img
                   src="/guaniaoren-logo.png"

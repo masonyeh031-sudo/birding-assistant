@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { birdCards } from "@/lib/home-data";
 import { taiwanCommonGuideBirds } from "@/lib/taiwan-common-guide-data";
@@ -559,6 +559,19 @@ export function TaiwanCommonBirdGuide() {
     });
   }, [query, guideFilter, habitatFilter, sizeFilter]);
 
+  const selectedBirdImage = selectedBird ? getVerifiedGuideImage(selectedBird.chineseName) : null;
+  const relatedBirds = useMemo(() => {
+    if (!selectedBird) return [];
+
+    return taiwanCommonGuideBirds
+      .filter(
+        (bird) =>
+          bird.chineseName !== selectedBird.chineseName &&
+          (bird.habitatCategory === selectedBird.habitatCategory || bird.size === selectedBird.size)
+      )
+      .slice(0, 3);
+  }, [selectedBird]);
+
   const hasActiveFilter = query || guideFilter !== "all" || habitatFilter !== "all" || sizeFilter !== "all";
 
   function clearFilters() {
@@ -567,6 +580,19 @@ export function TaiwanCommonBirdGuide() {
     setHabitatFilter("all");
     setSizeFilter("all");
   }
+
+  useEffect(() => {
+    if (!selectedBird) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setSelectedBird(null);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedBird]);
 
   return (
     <>
@@ -625,27 +651,27 @@ export function TaiwanCommonBirdGuide() {
             </span>
           </div>
           <div className="grid gap-3 md:grid-cols-4">
-          {guideFilters.map((filter) => {
-            const isSelected = guideFilter === filter.key;
+            {guideFilters.map((filter) => {
+              const isSelected = guideFilter === filter.key;
 
-            return (
-              <button
-                key={filter.key}
-                type="button"
-                onClick={() => setGuideFilter(filter.key)}
-                className={`rounded-[24px] border px-4 py-4 text-left transition ${
-                  isSelected
-                    ? "border-pine bg-pine text-white shadow-card"
-                    : "border-moss-100 bg-white text-moss-700 hover:border-moss-300 hover:bg-moss-50"
-                }`}
-              >
-                <span className="block text-base font-bold">{filter.label}</span>
-                <span className={`mt-1 block text-xs font-medium ${isSelected ? "text-white/75" : "text-moss-500"}`}>
-                  {filter.description}
-                </span>
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={filter.key}
+                  type="button"
+                  onClick={() => setGuideFilter(filter.key)}
+                  className={`rounded-[24px] border px-4 py-4 text-left transition ${
+                    isSelected
+                      ? "border-pine bg-pine text-white shadow-card"
+                      : "border-moss-100 bg-white text-moss-700 hover:border-moss-300 hover:bg-moss-50"
+                  }`}
+                >
+                  <span className="block text-base font-bold">{filter.label}</span>
+                  <span className={`mt-1 block text-xs font-medium ${isSelected ? "text-white/75" : "text-moss-500"}`}>
+                    {filter.description}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -704,27 +730,38 @@ export function TaiwanCommonBirdGuide() {
         </div>
 
         {hasActiveFilter ? (
-          <div className="mt-5 flex flex-wrap gap-2">
-            {query ? (
+          <div className="mt-5 rounded-[28px] border border-moss-100 bg-white/92 p-4 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">目前篩選條件</p>
+                <p className="mt-2 text-sm leading-7 text-moss-700">你現在看的不是縮減版頁面，仍然是完整圖鑑資料，只是先把符合條件的卡片排到前面並顯示結果數量。</p>
+              </div>
               <span className="rounded-full bg-moss-50 px-4 py-2 text-xs font-bold text-moss-700">
-                搜尋：{query}
+                目前顯示 {filteredBirds.length} 張
               </span>
-            ) : null}
-            {guideFilter !== "all" ? (
-              <span className="rounded-full bg-moss-50 px-4 py-2 text-xs font-bold text-moss-700">
-                分類：{guideFilters.find((item) => item.key === guideFilter)?.label}
-              </span>
-            ) : null}
-            {habitatFilter !== "all" ? (
-              <span className="rounded-full bg-moss-50 px-4 py-2 text-xs font-bold text-moss-700">
-                棲地：{habitatFilters.find((item) => item.key === habitatFilter)?.label}
-              </span>
-            ) : null}
-            {sizeFilter !== "all" ? (
-              <span className="rounded-full bg-moss-50 px-4 py-2 text-xs font-bold text-moss-700">
-                體型：{sizeFilters.find((item) => item.key === sizeFilter)?.label}
-              </span>
-            ) : null}
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {query ? (
+                <span className="rounded-full bg-moss-50 px-4 py-2 text-xs font-bold text-moss-700">
+                  搜尋：{query}
+                </span>
+              ) : null}
+              {guideFilter !== "all" ? (
+                <span className="rounded-full bg-moss-50 px-4 py-2 text-xs font-bold text-moss-700">
+                  分類：{guideFilters.find((item) => item.key === guideFilter)?.label}
+                </span>
+              ) : null}
+              {habitatFilter !== "all" ? (
+                <span className="rounded-full bg-moss-50 px-4 py-2 text-xs font-bold text-moss-700">
+                  棲地：{habitatFilters.find((item) => item.key === habitatFilter)?.label}
+                </span>
+              ) : null}
+              {sizeFilter !== "all" ? (
+                <span className="rounded-full bg-moss-50 px-4 py-2 text-xs font-bold text-moss-700">
+                  體型：{sizeFilters.find((item) => item.key === sizeFilter)?.label}
+                </span>
+              ) : null}
+            </div>
           </div>
         ) : null}
 
@@ -739,6 +776,18 @@ export function TaiwanCommonBirdGuide() {
         ) : null}
       </div>
 
+      <div className="mt-6 flex items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-black tracking-[0.18em] text-pine">圖鑑卡片牆</p>
+          <p className="mt-1 text-sm leading-7 text-moss-600">
+            預設直接展開全部 {taiwanCommonGuideBirds.length} 張卡片；你可以再用台灣特有種、棲地與體型快速縮小閱讀範圍。
+          </p>
+        </div>
+        <span className="hidden rounded-full border border-moss-100 bg-white/92 px-4 py-2 text-sm font-bold text-moss-700 sm:inline-flex">
+          全部卡片一次顯示
+        </span>
+      </div>
+
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {filteredBirds.map((bird) => (
           <GuideCard key={bird.chineseName} bird={bird} onOpen={setSelectedBird} />
@@ -746,27 +795,71 @@ export function TaiwanCommonBirdGuide() {
       </div>
 
       {selectedBird ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-pine/55 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-3xl overflow-hidden rounded-[34px] bg-white shadow-2xl">
-            <div className="grid gap-0 md:grid-cols-[0.9fr_1.1fr]">
-              <div className="bg-moss-50 p-5">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-pine/55 p-4 backdrop-blur-sm"
+          onClick={() => setSelectedBird(null)}
+        >
+          <div
+            className="max-h-[90vh] w-full max-w-5xl overflow-hidden rounded-[34px] bg-white shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="grid gap-0 lg:grid-cols-[0.92fr_1.08fr]">
+              <div className="space-y-4 bg-moss-50 p-5 sm:p-6">
                 <BirdImageBlock bird={selectedBird} />
+                <div className="rounded-[24px] border border-moss-100 bg-white/92 p-4 shadow-sm">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">快速重點</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <span className="rounded-full bg-moss-50 px-3 py-2 text-xs font-bold text-moss-700">
+                      {selectedBird.group}
+                    </span>
+                    <span className="rounded-full bg-sky/70 px-3 py-2 text-xs font-bold text-pine">
+                      {selectedBird.habitatCategory}
+                    </span>
+                    <span className="rounded-full bg-cream px-3 py-2 text-xs font-bold text-pine">
+                      {selectedBird.size}
+                    </span>
+                    <span className="rounded-full bg-white px-3 py-2 text-xs font-bold text-moss-700 ring-1 ring-moss-100">
+                      {selectedBird.season}
+                    </span>
+                    {selectedBird.isTaiwanEndemic ? (
+                      <span className="rounded-full bg-emerald-100 px-3 py-2 text-xs font-bold text-pine">
+                        台灣特有種
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
               </div>
-              <div className="space-y-4 p-6">
+
+              <div className="max-h-[90vh] space-y-4 overflow-y-auto p-6">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-sm font-semibold uppercase tracking-[0.2em] text-moss-500">
                       {selectedBird.group}
                     </p>
-                    <h2 className="mt-2 text-3xl font-bold text-pine">{selectedBird.chineseName}</h2>
+                    <h2 className="mt-2 text-3xl font-black text-pine">{selectedBird.chineseName}</h2>
+                    <p className="mt-2 max-w-2xl text-sm leading-7 text-moss-600">
+                      這張詳情卡會把圖鑑重點集中在一起，方便你直接拿來對照賞鳥助手的候選結果。
+                    </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedBird(null)}
-                    className="rounded-full border border-moss-200 px-4 py-2 text-sm font-semibold text-moss-700"
-                  >
-                    關閉
-                  </button>
+                  <div className="flex items-center gap-2">
+                    {selectedBirdImage ? (
+                      <a
+                        href={selectedBirdImage.page}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="rounded-full border border-moss-200 bg-white px-4 py-2 text-sm font-semibold text-moss-700 transition hover:border-moss-400 hover:text-pine"
+                      >
+                        查看圖片來源
+                      </a>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => setSelectedBird(null)}
+                      className="rounded-full border border-moss-200 px-4 py-2 text-sm font-semibold text-moss-700"
+                    >
+                      關閉
+                    </button>
+                  </div>
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
@@ -803,10 +896,44 @@ export function TaiwanCommonBirdGuide() {
                   <p className="mt-2 text-sm leading-7 text-moss-800">{selectedBird.intro}</p>
                 </div>
 
-                {(() => {
-                  const image = getVerifiedGuideImage(selectedBird.chineseName);
+                <div className="rounded-2xl bg-white px-4 py-4 ring-1 ring-moss-100">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">新手怎麼看這張卡</p>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                    <div className="rounded-2xl bg-moss-50/80 px-4 py-3">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">先看</p>
+                      <p className="mt-2 text-sm font-bold leading-6 text-pine">{selectedBird.size}</p>
+                    </div>
+                    <div className="rounded-2xl bg-sky/60 px-4 py-3">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">再看</p>
+                      <p className="mt-2 text-sm font-bold leading-6 text-pine">{selectedBird.habitatCategory}</p>
+                    </div>
+                    <div className="rounded-2xl bg-cream px-4 py-3">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">最後看</p>
+                      <p className="mt-2 text-sm font-bold leading-6 text-pine">{selectedBird.season}</p>
+                    </div>
+                  </div>
+                </div>
 
-                  if (!image) {
+                {relatedBirds.length ? (
+                  <div className="rounded-2xl bg-white px-4 py-4 ring-1 ring-moss-100">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">可以一起對照的鳥</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {relatedBirds.map((bird) => (
+                        <button
+                          key={bird.chineseName}
+                          type="button"
+                          onClick={() => setSelectedBird(bird)}
+                          className="rounded-full bg-moss-50 px-4 py-2 text-sm font-bold text-moss-700 transition hover:bg-moss-100 hover:text-pine"
+                        >
+                          {bird.chineseName}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {(() => {
+                  if (!selectedBirdImage) {
                     return (
                       <p className="rounded-2xl bg-amber-50 px-4 py-3 text-xs leading-6 text-amber-900 ring-1 ring-amber-100">
                         這張卡目前沒有放照片，因為尚未核對到同一鳥種的可靠圖片來源；為避免誤放不同鳥種，先保留待補照片。
@@ -817,14 +944,14 @@ export function TaiwanCommonBirdGuide() {
                   return (
                     <div className="rounded-2xl bg-white px-4 py-3 text-xs leading-6 text-moss-600 ring-1 ring-moss-100">
                       <a
-                        href={image.page}
+                        href={selectedBirdImage.page}
                         target="_blank"
                         rel="noreferrer"
                         className="font-semibold underline-offset-4 transition hover:text-pine hover:underline"
                       >
-                        圖片來源：{image.credit}
+                        圖片來源：{selectedBirdImage.credit}
                       </a>
-                      {image.note ? <p className="mt-1">{image.note}</p> : null}
+                      {selectedBirdImage.note ? <p className="mt-1">{selectedBirdImage.note}</p> : null}
                     </div>
                   );
                 })()}

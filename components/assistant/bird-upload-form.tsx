@@ -47,6 +47,7 @@ export function BirdUploadForm({
   const selectedSize = sizeOptions.find(
     (item) => item.value === (form.finalSelectedSize || form.userSelectedSize || form.size)
   );
+  const canAnalyze = Boolean(form.imagePreview) && !loading;
 
   return (
     <section
@@ -98,9 +99,36 @@ export function BirdUploadForm({
       <div className="mt-6 grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
         <div className="space-y-5">
           <BirdPhotoUploader form={form} onImageChange={onImageChange} />
+
+          <div className="rounded-[30px] border border-moss-100 bg-white p-5 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">目前操作進度</p>
+                <h3 className="mt-2 text-xl font-black text-pine">
+                  {form.imagePreview ? "照片已就緒，接著確認條件" : "先上傳照片，再往下選條件"}
+                </h3>
+              </div>
+              <span className="rounded-full bg-moss-50 px-4 py-2 text-sm font-bold text-moss-700">
+                {form.imagePreview ? "可進入分析" : "尚未完成第一步"}
+              </span>
+            </div>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              {[
+                { label: "照片", value: form.imagePreview ? "已完成" : "未完成" },
+                { label: "大小 / 環境", value: selectedSize || selectedEnvironment ? "已補條件" : "可再補充" },
+                { label: "顏色", value: form.colorTraits.length ? `${form.colorTraits.length} 個` : "待確認" },
+              ].map((item) => (
+                <div key={item.label} className="rounded-[22px] bg-moss-50/70 px-4 py-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss-500">{item.label}</p>
+                  <p className="mt-2 text-sm font-bold text-pine">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="space-y-5">
+        <div className="space-y-5 xl:sticky xl:top-28 xl:self-start">
           <div className="rounded-[30px] border border-moss-100 bg-sand p-5">
             <div className="flex items-center justify-between gap-4">
               <div>
@@ -167,8 +195,15 @@ export function BirdUploadForm({
           </div>
 
           <div className="rounded-[34px] border border-moss-100 bg-[linear-gradient(135deg,#264333_0%,#355744_58%,#4b715d_100%)] px-5 py-6 text-white shadow-card sm:px-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-white/70">開始分析</p>
-            <p className="mt-2 text-lg font-bold">確認顏色後，讓系統重新排序候選鳥種</p>
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-white/70">開始分析</p>
+                <p className="mt-2 text-lg font-bold">確認顏色後，讓系統重新排序候選鳥種</p>
+              </div>
+              <span className="rounded-full bg-white/12 px-4 py-2 text-xs font-bold text-white/90">
+                最後一步
+              </span>
+            </div>
             <p className="mt-2 text-sm leading-7 text-white/80">
               {loading
                 ? loadingMessage
@@ -180,11 +215,17 @@ export function BirdUploadForm({
             <button
               type="button"
               onClick={onAnalyze}
-              disabled={loading || !form.imagePreview}
-              className="mt-5 w-full rounded-[28px] bg-white px-6 py-5 text-lg font-black text-pine shadow-sm transition hover:-translate-y-0.5 hover:bg-moss-50 disabled:cursor-not-allowed disabled:opacity-60 sm:text-xl"
+              disabled={!canAnalyze}
+              className="mt-5 w-full rounded-[30px] bg-white px-6 py-5 text-xl font-black text-pine shadow-sm transition hover:-translate-y-0.5 hover:bg-moss-50 disabled:cursor-not-allowed disabled:opacity-60 sm:text-2xl"
             >
               {loading ? "分析中..." : "開始分析"}
             </button>
+
+            {!form.imagePreview ? (
+              <p className="mt-3 text-sm leading-7 text-white/75">
+                目前還不能分析，因為你還沒有上傳照片。
+              </p>
+            ) : null}
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <button
